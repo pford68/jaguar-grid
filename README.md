@@ -58,7 +58,7 @@ In some browsers, IntersectionObserver doesn't play nice with `<tbody>` elements
 
 ## Usage
 
-```jsx
+```tsx
 function MyGreatPage(props) {
   const data = new ObservableList(serverData);
 
