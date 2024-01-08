@@ -1,0 +1,14 @@
+.container {
+    overflow: auto;
+    box-sizing: border-box;
+}
+.container.resizable {
+    resize: vertical;
+}
+.container.border {
+    --datagrid-border: none;
+    border: 1px solid var(--datagrid-border-color, silver);
+}
+.container.borderless {
+    border: none;
+}
