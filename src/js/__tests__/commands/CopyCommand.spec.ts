@@ -1,20 +1,12 @@
 import people from "../../../../tests/fixtures/people.json";
 import Person from "../../../../tests/models/Person";
 import CopyCommand from "../../commands/CopyCommand";
-import {Struct} from "../../../types/types";
-
 
 describe("CopyCommand", () => {
     let list:Person[];
-    let mockStore: Struct = {};
-    const Storage = function(){};
-    Storage.prototype.setItem = (key: string, value: string) => mockStore[key] = value;
-    Storage.prototype.getItem = (key: string) => mockStore[key];
-    // @ts-ignore
-    global.sessionStorage = new Storage();
 
     beforeEach(() => {
-        mockStore = {};
+        //mockStore = {};
         list = people.map(person => new Person(person));
     });
 
@@ -60,9 +52,11 @@ describe("CopyCommand", () => {
             expect(item?.includes("Doncic")).toBeTruthy();
             expect(item?.includes("John")).toBeTruthy();
             expect(item?.includes("Smith")).toBeTruthy();
-            expect(item?.match(/firstName/g)?.length).toBe(3);
-            expect(item?.match(/lastName/g)?.length).toBe(3);
-            expect(item?.match(/"age"/g)?.length).toBe(3);
+            expect(item?.match(/columnNames/g)?.length).toBe(1);
+            expect(item?.match(/data/g)?.length).toBe(1);
+            expect(item?.match(/firstName/g)?.length).toBe(4);  // 3 entries, plus 1 from columnNames
+            expect(item?.match(/lastName/g)?.length).toBe(4);
+            expect(item?.match(/"age"/g)?.length).toBe(4);
         });
     })
 })

@@ -51,7 +51,7 @@ export default class CopyCommand<T extends Struct>
             names.forEach(name => {
                 data[name] = isTextSelected() ? getSelection()?.toString() : record.get(name);
             });
-            // @ts-ignore
+            // @ts-ignore:{ [key: string]: unknown; } is assignable to T: T could be a different subtype of Struct.
             value.data?.push(data)
         });
         this.getParameters().push(value);
