@@ -13,6 +13,7 @@ import RowFactory from "./RowFactory";
 import {CommandStack} from "./util/CommandStack";
 import {LayoutManager} from "./layout/LayoutManager";
 import CopyCommand from "./commands/CopyCommand";
+import {useStorageClipboard} from "./clipboard/useStorageClipboard";
 
 
 export type DataGridProps = {
@@ -119,17 +120,7 @@ export default function DataGrid<T>(props:DataGridProps): ReactElement {
     const [state, gridDispatch] = useReducer(reducer, initialGridState);
 
     //====================================== Effects
-    useEffect(() => {
-
-        const clearClipboard = () => {
-            sessionStorage.removeItem(CopyCommand.TOKEN);
-        };
-
-        window.addEventListener("unload", clearClipboard);
-        return () => {
-            window.removeEventListener("unload", clearClipboard);
-        };
-    }, []);
+    useStorageClipboard();
 
     useEffect(() => {
         if (gridRef.current != null) {

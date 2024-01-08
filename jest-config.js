@@ -6,7 +6,7 @@ module.exports = {
         '\\.[ts|tsx]$': 'ts-jest',
     },
     moduleDirectories: ["node_modules"],
-    testEnvironment: "node",
+    testEnvironment: "jsdom",
     testMatch: [ "**/__tests__/**/*.[jt]s?(x)"],
     testPathIgnorePatterns: ["__mocks__"],
     moduleNameMapper: {
