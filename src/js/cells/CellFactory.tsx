@@ -129,19 +129,7 @@ export default function CellFactory<T extends Struct>(props: CellFactoryProps<T>
     const value = gridContext.items?.get(rowIndex)?.get(name);
 
     //==================================================== Effects
-    useEffect(() => {
-        //@ts-ignore
-        const deactivate = (e) => {
-            if (ref.current != null && !ref.current?.contains(e.target) && previousActiveState.current === true) {
-                //dispatch({type: "discard"});
-            }
-        }
-        document.body?.addEventListener("click", deactivate);
 
-        return () => {
-            document.body?.removeEventListener("click", deactivate);
-        };
-    }, []);
 
     useEffect(() => {
         const onFocusChanged = (coords: Coordinates | undefined) => {
