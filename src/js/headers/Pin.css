@@ -1,0 +1,19 @@
+.pin {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    text-align: center;
+    background-color: transparent;
+    grid-area: top;
+    transform: rotate(45deg);
+}
+.pin:hover {
+    transform: none;
+    cursor: pointer;
+}
+.pin.active {
+    transform: none;
+}
+.pin.active:hover {
+    transform: rotate(45deg);
+}
