@@ -7,12 +7,7 @@ import ObservableList from "../../ObservableList";
 
 describe("PasteCommand", () => {
     let list:ObservableList<Struct>;
-    let mockStore: Struct = {};
     let colNames: string[];
-    const Storage = function(){};
-    Storage.prototype.getItem = (key: string) => mockStore[key];
-    // @ts-ignore
-    global.sessionStorage = new Storage();
 
     beforeEach(() => {
         list = new ObservableList<Struct>(people.map(person => new Person(person)));
@@ -26,10 +21,10 @@ describe("PasteCommand", () => {
         });
         colNames = ["active", "age", "lastName"];
         const data = JSON.stringify(subItems);
-        mockStore = {
-            [CopyCommand.TOKEN]:
-                `{\"items\": [{ \"data\": ${data}, \"columnNames\": ${JSON.stringify(colNames)} }]}`,
-        };
+        sessionStorage.setItem(
+            CopyCommand.TOKEN,
+            `{\"items\": [{ \"data\": ${data}, \"columnNames\": ${JSON.stringify(colNames)} }]}`
+        );
     });
 
     it("should update the selected records", () => {
