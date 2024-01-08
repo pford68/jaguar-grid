@@ -1,4 +1,4 @@
-import React, {ReactElement} from "react";
+import {ReactElement} from "react";
 import TableColumn from "../TableColumn";
 import {DataGridProps} from "../DataGrid";
 import TableFooter from "../TableFooter";

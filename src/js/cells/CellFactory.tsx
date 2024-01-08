@@ -160,7 +160,6 @@ export default function CellFactory<T extends Struct>(props: CellFactoryProps<T>
     useEffect(() => {
         if (state.active) {
             rendererRef.current?.focus();
-            //@ts-ignore
             if (state.task === "clear") {
                 rendererRef.current?.select();
             }

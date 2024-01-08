@@ -1,5 +1,4 @@
 import React from "react";
-import styles from "./App.css";
 import NumericRenderer from "./js/renderers/NumericRenderer";
 
 const App = () =>{

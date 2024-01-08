@@ -1,6 +1,5 @@
 import React, {ReactElement} from "react";
 import styles from "../DataGrid.css";
-import {DataGridProps} from "../DataGrid";
 
 type ColumnStyleProps = {
     type: "auto" | "equal",

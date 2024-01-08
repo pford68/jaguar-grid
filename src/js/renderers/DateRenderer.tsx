@@ -4,8 +4,8 @@ import styles from "./Renderers.css";
 import {BaseRendererProps} from "./types";
 import Text from "./Text";
 
-export type DateRendererProps = BaseRendererProps<number> & {};
-export type DateTimeRendererProps = DateRendererProps & {};
+export type DateRendererProps = BaseRendererProps<number> & Record<string, never>;
+export type DateTimeRendererProps = DateRendererProps & Record<string, never>;
 
 export default function DateRenderer(props: DateRendererProps): React.ReactElement {
     const {

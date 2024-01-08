@@ -47,7 +47,7 @@ export default class SaveCommand<T extends Struct>
         }
 
         updates.forEach(update => {
-            for (let updateKey in update.value) {
+            for (const updateKey in update.value) {
                 update.record?.set(updateKey, update.value[updateKey]);
             }
         });

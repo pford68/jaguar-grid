@@ -12,7 +12,6 @@ import ColumnStyle from "./layout/ColumnStyle";
 import RowFactory from "./RowFactory";
 import {CommandStack} from "./util/CommandStack";
 import {LayoutManager} from "./layout/LayoutManager";
-import CopyCommand from "./commands/CopyCommand";
 import {useStorageClipboard} from "./clipboard/useStorageClipboard";
 
 
