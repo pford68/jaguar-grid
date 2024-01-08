@@ -138,7 +138,6 @@ export class FocusMode implements CellState {
             }
             case "v": {
                 if (e.ctrlKey || e.metaKey) {
-                    // todo:if  selected text is in clipboard, return
                     e.preventDefault();
                     if (selectionModel?.edges != null) {
                         const cmd = new PasteCommand(items);
