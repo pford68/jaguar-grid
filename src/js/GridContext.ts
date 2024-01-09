@@ -22,6 +22,7 @@ export type GridContextType = {
     pinned: Set<string>,
     unpinned: Set<string>,
     offsets: Map<string, number>,
+    columnWidths: Map<string, number>,
     columnSizing: "auto" | "equal" | "max-content",
 }
 export const initialGridContext: GridContextType = {
@@ -35,6 +36,7 @@ export const initialGridContext: GridContextType = {
     pinned: new Set<string>(),
     unpinned: new Set<string>(),
     offsets: new Map(),
+    columnWidths: new Map(),
     columnSizing: "auto",
 }
 export const GridContext = createContext(initialGridContext);

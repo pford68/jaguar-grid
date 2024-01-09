@@ -108,6 +108,10 @@ export default function CellFactory<T extends Struct>(props: CellFactoryProps<T>
         selectionModel,
         focusModel,
         nullable,
+        items,
+        columnWidths,
+        columnSizing,
+        pinned,
     } = gridContext;
 
     const focusMode = new FocusMode(gridContext);
@@ -125,15 +129,15 @@ export default function CellFactory<T extends Struct>(props: CellFactoryProps<T>
     });
     const previousActiveState = usePreviousState({watch: state.active});
     const [selected, setSelected] = useState(false);
-    const rowCount = gridContext.items?.length ?? 0;
-    const value = gridContext.items?.get(rowIndex)?.get(name);
+    const rowCount = items?.length ?? 0;
+    const value = items?.get(rowIndex)?.get(name);
 
     //==================================================== Effects
     useEffect(() => {
         if (ref.current != null) {
             const parent = ref.current.parentElement;
-            if (parent != null) {
-                const {width} = parent.getBoundingClientRect();
+            if (parent != null && columnWidths.get(name) == null) {
+                const width = parent.getBoundingClientRect().width;
                 parent.style.width = `${width}px`;
             }
         }
@@ -143,7 +147,11 @@ export default function CellFactory<T extends Struct>(props: CellFactoryProps<T>
                 node.style.width = "unset";
             }
         }
-    }, [gridContext.columnSizing])
+    }, [
+        columnSizing,
+        pinned,
+    ]);
+
 
     useEffect(() => {
         const onFocusChanged = (coords: Coordinates | undefined) => {
@@ -171,13 +179,14 @@ export default function CellFactory<T extends Struct>(props: CellFactoryProps<T>
         focusModel,
     ]); // Must watch these to reset after re-rendering (e.g., sorting)
 
+
     useEffect(() => {
         if (state.active) {
             rendererRef.current?.focus();
             if (state.task === "clear") {
                 rendererRef.current?.select();
             }
-        } else if (gridContext.focusModel?.isFocused(rowIndex, colIndex)){
+        } else if (focusModel?.isFocused(rowIndex, colIndex)){
             ref.current?.focus();
         }
     }, [state.active, value]);
@@ -187,7 +196,11 @@ export default function CellFactory<T extends Struct>(props: CellFactoryProps<T>
         const offset = gridContext.offsets.get(name);
         const el = ref.current?.parentElement;
         if (el != null && offset != null) el.style.left = `${offset}px`;
-    }, [gridContext.pinned, focusModel?.focused, state.active])
+    }, [
+        pinned,
+        focusModel?.focused,
+        state.active
+    ])
 
 
     // ====================================== Event handlers
@@ -216,7 +229,7 @@ export default function CellFactory<T extends Struct>(props: CellFactoryProps<T>
         state.active
             ? editMode?.onKeyDown(e, dispatch)
             : focusMode?.onKeyDown(e, dispatch);
-    }
+    };
 
     // ============================================= Rendering
     const {top, right, bottom, left} = selectionModel?.edges ?? {};
@@ -236,7 +249,7 @@ export default function CellFactory<T extends Struct>(props: CellFactoryProps<T>
     );
     const rendererClass = joinCss(
         state.active ? styles.active : styles.inactive,
-    )
+    );
     /*
     A custom renderer is like any other renderer, except that it needs the model row.
     So I separate the two Renderer types.
@@ -260,7 +273,7 @@ export default function CellFactory<T extends Struct>(props: CellFactoryProps<T>
         } else {
             dispatch({type: "validated", payload: true});
         }
-    }
+    };
 
 
     // Weeding out unwanted props from higher up, sending only true renderer props.

@@ -1,4 +1,4 @@
-import React, {ReactElement, KeyboardEvent, useEffect, useReducer, useRef} from "react";
+import React, {ReactElement, KeyboardEvent, useReducer, useRef} from "react";
 import Virtualizer from "./Virtualizer";
 import ObservableList, {Record} from "./ObservableList";
 import type {Struct} from "../types/types";
@@ -50,10 +50,11 @@ export type GridState = {
     unpinned: Set<string>,
     offsets: Map<string, number>,
     lastUpdated: number,
+    fitContainer: boolean,
 };
 
 export type GridAction = {
-    type: "sort" | "reverseSort" | "resize" | "undo" | "redo" | "pin" | "unpin" | "update",
+    type: "sort" | "reverseSort" | "resize" | "undo" | "redo" | "pin" | "unpin" | "update" | "fitContainer",
     payload?: {name: string, value?: unknown},
 }
 
@@ -114,6 +115,7 @@ export default function DataGrid(props:DataGridProps): ReactElement {
         unpinned: new Set<string>([...colNames]),
         offsets: new Map(),
         lastUpdated: new Date().getTime(),
+        fitContainer: false,
     }
 
     const [state, gridDispatch] = useReducer(reducer, initialGridState);
@@ -121,11 +123,14 @@ export default function DataGrid(props:DataGridProps): ReactElement {
     //====================================== Effects
     useStorageClipboard();
 
+    /*
     useEffect(() => {
-        if (gridRef.current != null) {
-            layoutManager.setContainerSize(gridRef.current);
+        if (gridRef.current != null && layoutManager.fitContainer(gridRef.current)) {
+            gridDispatch({type: "fitContainer"});
         }
     }, [gridRef.current]);
+
+     */
 
 
     //====================================== Event handlers
@@ -173,8 +178,8 @@ export default function DataGrid(props:DataGridProps): ReactElement {
             (!pinned.has(aName) && pinned.has(bName) ? 1 : 0);
     });
 
-    const {width: containerWidth, height: containerHeight} = layoutManager.containerSize;
-
+    const columnWidths = new Map(columns.map(col => [col.props.name, col.props.width]))
+    const finalColumnSizing = columnSizing && !state.fitContainer ? columnSizing : "equal";
 
     return (
         <GridContext.Provider value={{
@@ -182,21 +187,23 @@ export default function DataGrid(props:DataGridProps): ReactElement {
             gridDispatch,
             items: data,
             columnNames: colNames,
+            columnWidths,
             selectionModel,
             stickyHeaders,
             nullable,
             columnSizing,
         }}>
             <ColumnStyle
-                type={columnSizing == "auto" || columnSizing == "equal" ? columnSizing : "auto"}
+                type={finalColumnSizing == "auto" || finalColumnSizing == "equal" ? finalColumnSizing : "auto"}
                 columns={columns}
+                maxWidth={layoutManager.maxColumnWidth}
             />
             <div
                 ref={gridRef}
                 className={joinCss(
                     styles.grid,
                     scrollable ? styles.scrollable : "",
-                    columnSizing === "max-content" ? styles.columnSizing : "",
+                    finalColumnSizing === "max-content" ? styles.columnSizing : "",
                     className
                 )}
                 onKeyDown={onKeyDown}
@@ -294,6 +301,9 @@ function reducer(state: GridState, action: GridAction): GridState {
         }
         case "update": {
             return {...state, lastUpdated: new Date().getTime()}
+        }
+        case "fitContainer": {
+            return {...state, fitContainer: true};
         }
         default:
             throw new Error();
