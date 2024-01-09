@@ -1,46 +1,56 @@
 import React, {ReactElement} from "react";
 import styles from "../DataGrid.css";
-import {DataGridProps} from "../DataGrid";
 
 type ColumnStyleProps = {
     type: "auto" | "equal",
     columns: ReactElement[],
+    maxWidth?: number,
 }
 
+/**
+ *
+ * @param props
+ * @constructor
+ */
 export default function ColumnStyle(props: ColumnStyleProps) {
-    const {type, columns} = props;
+    const {type, columns, maxWidth} = props;
 
     switch(type) {
         case "equal":
             return rendererEqualStyle(columns.length);
         default:
-            return renderAutoStyle(columns);
+            return renderAutoStyle(columns, maxWidth);
     }
 }
+ColumnStyle.defaultProps = {
+    type: "auto",
+}
 
-function renderAutoStyle(columns: ReactElement[]): ReactElement {
+function renderAutoStyle(columns: ReactElement[], maxWidth?: number): ReactElement {
     const widths = columns.map(col => {
         return col.props.width != null ? `${col.props.width}px` : "auto";
     })
     return (
         <style>
-            {`
-                  .${styles.grid} {
-                     grid-template-columns: ${widths.join(" ")};
-                  }
-               `}
+            {
+              `.${styles.grid} {
+                 grid-template-columns: ${widths.join(" ")};
+              }`
+            }
+            {maxWidth != null ? `.cell {max-width: ${maxWidth}px}` : ""}
         </style>
     );
 }
 
-function rendererEqualStyle(columnCount: number): ReactElement {
+function rendererEqualStyle(columnCount: number, maxWidth?: number): ReactElement {
     return (
         <style>
-            {`
-                   .${styles.grid} {
-                      grid-template-columns: repeat(${columnCount}, 1fr);
-                   }
-                `}
+            {
+               `.${styles.grid} {
+                  grid-template-columns: repeat(${columnCount}, 1fr);
+               }`
+            }
+            {maxWidth != null ? `.cell {max-width: ${maxWidth}px}` : ""}
         </style>
     )
 }

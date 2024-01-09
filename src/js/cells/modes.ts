@@ -1,10 +1,9 @@
-import {Dispatch, KeyboardEvent, useContext} from "react";
+import {Dispatch, KeyboardEvent} from "react";
 import {CellFactoryAction} from "./types";
 import {GridContextType} from "../GridContext";
 import CopyCommand from "../commands/CopyCommand";
 import PasteCommand from "../commands/PasteCommand";
 import CutCommand from "../commands/CutCommand";
-import {isTextSelected} from "../util/utils";
 
 interface CellState {
     onKeyDown: (e: KeyboardEvent, dispatch: Dispatch<CellFactoryAction>) => void;
@@ -33,7 +32,6 @@ export class FocusMode implements CellState {
             columnNames,
             gridDispatch,
             undoStack,
-            redoStack,
         } = this.#context;
         const focusedCell = focusModel?.focused;
         if (focusedCell == null || focusModel ==  null || selectionModel == null || items == null) return;
@@ -138,7 +136,6 @@ export class FocusMode implements CellState {
             }
             case "v": {
                 if (e.ctrlKey || e.metaKey) {
-                    // todo:if  selected text is in clipboard, return
                     e.preventDefault();
                     if (selectionModel?.edges != null) {
                         const cmd = new PasteCommand(items);

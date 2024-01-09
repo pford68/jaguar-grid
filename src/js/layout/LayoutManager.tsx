@@ -1,4 +1,4 @@
-import React, {ReactElement} from "react";
+import {ReactElement} from "react";
 import TableColumn from "../TableColumn";
 import {DataGridProps} from "../DataGrid";
 import TableFooter from "../TableFooter";
@@ -12,6 +12,7 @@ export class LayoutManager {
     readonly #children: ReactElement[];
     #containerHeight: number | undefined;
     #containerWidth: number | undefined;
+    #visibleColumns: ReactElement[] | undefined;
 
     constructor(props: DataGridProps) {
         this.#props = props;
@@ -30,7 +31,10 @@ export class LayoutManager {
     }
 
     get visibleColumns(): ReactElement[] {
-        return this.columns.filter(col => col.props.visible);
+        if (this.#visibleColumns == null) {
+            this.#visibleColumns = this.columns.filter(col => col.props.visible);
+        }
+        return this.#visibleColumns;
     }
 
     get containerSize(): Size {
@@ -49,6 +53,18 @@ export class LayoutManager {
     getFooter(): ReactElement | undefined {
         return this.#children.find(child => child.type === TableFooter);
     }
+
+    get maxColumnWidth(): number {
+        return (this.#containerWidth ?? 0) / this.visibleColumns.length;
+    }
+
+    fitContainer(el: HTMLElement): boolean {
+        const {width} = el.getBoundingClientRect();
+        this.setContainerSize(el);
+        const {width: containerWidth} = this.containerSize;
+        return width < (containerWidth ?? 0);
+    }
+
 }
 
 type Size = {

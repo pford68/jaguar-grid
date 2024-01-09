@@ -13,7 +13,7 @@ type RowFactoryProps = {
     className?: string,
 }
 
-export default function RowFactory<T>(props: RowFactoryProps): ReactElement[] {
+export default function RowFactory(props: RowFactoryProps): ReactElement[] {
     const {
         row,
         rowIndex,
