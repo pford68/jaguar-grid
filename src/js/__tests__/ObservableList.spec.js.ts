@@ -1,5 +1,5 @@
 import peopleData from "../../../tests/fixtures/people.json";
-import Person from "../../../tests/models/Person";
+import Person, {Measurements} from "../../../tests/models/Person";
 import ObservableList, {Record} from "..//ObservableList";
 import {Struct} from "../../types/types";
 import {deepClone} from "../util/utils";
@@ -11,7 +11,7 @@ function testAllKeys(r: Record<Struct>) {
     expect(r.get("active")).toBe(true);
     expect(r.get("lastUpdated")).toBe(1704401089);
     const m = r.get("measurements");
-    // @ts-ignore
+    // @ts-expect-error: m is of type unknown
     expect(m.height).toBe(70);
 }
 describe("Record", () => {
@@ -58,8 +58,7 @@ describe("Record", () => {
         it("should be extensible to know how to save changes to complex properties", () => {
             const person = new Person(people[5]);
             person.set("measurements", 900);
-            // @ts-ignore
-            expect(person.get("measurements").height).toBe(900);
+            expect((person.get("measurements") as Measurements).height).toBe(900);
         })
     });
 
@@ -114,7 +113,7 @@ describe("Record", () => {
 
         it("should not be writable", () => {
             try {
-                // @ts-ignore
+                // @ts-expect-error: intentionally causing an error here--assigning a value to a readonly property..
                 record.id = "gjfkghgh";
                 fail("We should not reach this point.")
             } catch (e:any) {
@@ -202,7 +201,7 @@ describe("ObservableList", () => {
             let record = list
                 .find((item) => item.get("firstName") == "Adolis");
             expect(record).toBeDefined();
-            // @ts-ignore: we test for undefined above.
+            // @ts-expect-error: we test for undefined above.
             testAllKeys(record);
 
             record = list

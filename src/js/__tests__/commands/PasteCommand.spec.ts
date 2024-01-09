@@ -23,7 +23,7 @@ describe("PasteCommand", () => {
         const data = JSON.stringify(subItems);
         sessionStorage.setItem(
             CopyCommand.TOKEN,
-            `{\"items\": [{ \"data\": ${data}, \"columnNames\": ${JSON.stringify(colNames)} }]}`
+            `{"items": [{ "data": ${data}, "columnNames": ${JSON.stringify(colNames)} }]}`
         );
     });
 
@@ -46,7 +46,7 @@ describe("PasteCommand", () => {
         const cmd = new PasteCommand(list);
         cmd.setParameter({rowIndex: 0, colIndex: 1, columnNames: Object.keys(people[0])});
         cmd.execute();
-        let record = list.get(2);
+        const record = list.get(2);
         expect(record?.get("lastName")).toBe("Seager");
         expect(record?.get("amount")).toBe(55.1);
         expect(record?.get("lastUpdated")).toBe(1704401089);
@@ -56,7 +56,7 @@ describe("PasteCommand", () => {
         const cmd = new PasteCommand(list);
         cmd.setParameter({rowIndex: 0, colIndex: 1, columnNames: Object.keys(people[0])});
         cmd.execute();
-        let record = list.get(0);
+        const record = list.get(0);
         expect(record?.get("firstName")).toBe("Philip");
         expect(record?.get("active")).toBe(true);
         expect(record?.get("age")).toBe(29);

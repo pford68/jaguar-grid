@@ -26,6 +26,10 @@ type TableFooterProps = {
     renderer?: (props: BaseTableFooterProps & {rowCount?: number}) => ReactElement,
 } & BaseTableFooterProps;
 
+type FooterState = {
+    parent: HTMLElement | null,
+}
+
 
 export default function TableFooter(props: TableFooterProps): React.ReactElement {
     const {
@@ -36,11 +40,13 @@ export default function TableFooter(props: TableFooterProps): React.ReactElement
     } = props;
     const gridContext = useContext(GridContext);
     const ref = useRef(null);
-    const [state, setState] = useState({parent: null});
+    const initialState: FooterState = {
+        parent: null,
+    }
+    const [state, setState] = useState(initialState);
 
     useEffect(() => {
         if (attachTo?.current != null) {
-            // @ts-ignore
             setState({parent: attachTo.current})
         }
     }, [attachTo?.current]);

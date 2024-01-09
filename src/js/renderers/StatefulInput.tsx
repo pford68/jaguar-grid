@@ -87,7 +87,7 @@ export default function StatefulInput<T>(props: StatefulInputProps, ref?: Ref<HT
     return (
         <input
             {...nextProps}
-            // @ts-ignore
+            // @ts-expect-error: refs type is not recognized.  It's a todo.
             ref={ref?.current !== undefined ? ref : undefined}
             value={value ?? initValue}
             onInput={(e) => {

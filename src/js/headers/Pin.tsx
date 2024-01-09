@@ -18,7 +18,7 @@ type PinProps = {
 }
 
 export default function Pin(props: PinProps): ReactElement {
-    const {active, name, updater, parentRef} = props;
+    const {active, updater, parentRef} = props;
     const params = {el: parentRef.current, pushed: active, updater};
 
     return (

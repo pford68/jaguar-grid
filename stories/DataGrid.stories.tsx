@@ -25,6 +25,7 @@ const meta: Meta<PropsAndArgs> = {
         alternateRows: false,
         nullable: false,
         stickyHeaders: true,
+        columnSizing: "auto",
     }
 };
 
@@ -42,7 +43,7 @@ const defaultRenderer = (args: PropsAndArgs) => {
             <TableColumn type="currency" name="amount" text="Amount" />
             <TableColumn type="number" name="age" text="Age" />
             <TableColumn name="active" text="Active" />
-            <TableColumn name="lastUpdated" text="Last Updated" />
+            <TableColumn name="lastUpdated" text="Last Updated" width={100} />
             <TableColumn
                 name="measurements"
                 text="Height"
