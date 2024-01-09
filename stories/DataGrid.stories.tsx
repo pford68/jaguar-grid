@@ -25,6 +25,7 @@ const meta: Meta<PropsAndArgs> = {
         alternateRows: false,
         nullable: false,
         stickyHeaders: true,
+        columnSizing: "auto",
     }
 };
 

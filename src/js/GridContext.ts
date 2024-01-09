@@ -21,8 +21,8 @@ export type GridContextType = {
     redoStack?: CommandStack,
     pinned: Set<string>,
     unpinned: Set<string>,
-    widths: Map<string, number>,
     offsets: Map<string, number>,
+    columnSizing: "auto" | "equal" | "max-content",
 }
 export const initialGridContext: GridContextType = {
     resizedBy: 0,
@@ -35,6 +35,6 @@ export const initialGridContext: GridContextType = {
     pinned: new Set<string>(),
     unpinned: new Set<string>(),
     offsets: new Map(),
-    widths: new Map(),
+    columnSizing: "auto",
 }
 export const GridContext = createContext(initialGridContext);

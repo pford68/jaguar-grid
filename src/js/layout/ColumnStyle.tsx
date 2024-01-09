@@ -1,4 +1,4 @@
-import React, {ReactElement} from "react";
+import React, {ReactElement, RefObject, useContext, useEffect, useRef} from "react";
 import styles from "../DataGrid.css";
 
 type ColumnStyleProps = {
@@ -6,6 +6,11 @@ type ColumnStyleProps = {
     columns: ReactElement[],
 }
 
+/**
+ *
+ * @param props
+ * @constructor
+ */
 export default function ColumnStyle(props: ColumnStyleProps) {
     const {type, columns} = props;
 
@@ -15,6 +20,9 @@ export default function ColumnStyle(props: ColumnStyleProps) {
         default:
             return renderAutoStyle(columns);
     }
+}
+ColumnStyle.defaultProps = {
+    type: "auto",
 }
 
 function renderAutoStyle(columns: ReactElement[]): ReactElement {

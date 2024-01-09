@@ -129,7 +129,21 @@ export default function CellFactory<T extends Struct>(props: CellFactoryProps<T>
     const value = gridContext.items?.get(rowIndex)?.get(name);
 
     //==================================================== Effects
-
+    useEffect(() => {
+        if (ref.current != null) {
+            const parent = ref.current.parentElement;
+            if (parent != null) {
+                const {width} = parent.getBoundingClientRect();
+                parent.style.width = `${width}px`;
+            }
+        }
+        return () => {
+            const node = ref.current?.parentElement;
+            if (node != null) {
+                node.style.width = "unset";
+            }
+        }
+    }, [gridContext.columnSizing])
 
     useEffect(() => {
         const onFocusChanged = (coords: Coordinates | undefined) => {

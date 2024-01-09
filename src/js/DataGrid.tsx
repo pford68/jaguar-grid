@@ -24,6 +24,7 @@ export type DataGridProps = {
     nullable: boolean,
     rowHeight: number,
     pageSize: number,
+    columnSizing: "auto" | "equal" | "max-content",
     height?: number,
     className?: string,
     sortColumn?: string,
@@ -48,7 +49,6 @@ export type GridState = {
     pinned: Set<string>,
     unpinned: Set<string>,
     offsets: Map<string, number>,
-    widths: Map<string, number>,
     lastUpdated: number,
 };
 
@@ -78,7 +78,7 @@ export type GridAction = {
  * @param props
  * @constructor
  */
-export default function DataGrid<T>(props:DataGridProps): ReactElement {
+export default function DataGrid(props:DataGridProps): ReactElement {
     const {
         data,
         className,
@@ -86,6 +86,7 @@ export default function DataGrid<T>(props:DataGridProps): ReactElement {
         scrollable,
         nullable,
         alternateRows,
+        columnSizing,
     } = props;
 
     const gridRef = useRef<HTMLDivElement>(null);
@@ -112,7 +113,6 @@ export default function DataGrid<T>(props:DataGridProps): ReactElement {
         pinned: new Set<string>(),
         unpinned: new Set<string>([...colNames]),
         offsets: new Map(),
-        widths: new Map(),
         lastUpdated: new Date().getTime(),
     }
 
@@ -185,13 +185,18 @@ export default function DataGrid<T>(props:DataGridProps): ReactElement {
             selectionModel,
             stickyHeaders,
             nullable,
+            columnSizing,
         }}>
-            <ColumnStyle type="auto" columns={columns} />
+            <ColumnStyle
+                type={columnSizing == "auto" || columnSizing == "equal" ? columnSizing : "auto"}
+                columns={columns}
+            />
             <div
                 ref={gridRef}
                 className={joinCss(
                     styles.grid,
                     scrollable ? styles.scrollable : "",
+                    columnSizing === "max-content" ? styles.columnSizing : "",
                     className
                 )}
                 onKeyDown={onKeyDown}
