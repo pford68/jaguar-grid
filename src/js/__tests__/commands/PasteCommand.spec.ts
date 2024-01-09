@@ -23,7 +23,7 @@ describe("PasteCommand", () => {
         const data = JSON.stringify(subItems);
         sessionStorage.setItem(
             CopyCommand.TOKEN,
-            `{\"items\": [{ \"data\": ${data}, \"columnNames\": ${JSON.stringify(colNames)} }]}`
+            `{"items": [{ "data": ${data}, "columnNames": ${JSON.stringify(colNames)} }]}`
         );
     });
 
