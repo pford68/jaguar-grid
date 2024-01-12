@@ -55,7 +55,7 @@ export type GridState = {
 
 export type GridAction = {
     type: "sort" | "reverseSort" | "resize" | "undo" | "redo" | "pin" | "unpin" | "update" | "fitContainer",
-    payload?: {name: string, value?: unknown},
+    payload?: { name: string, value?: unknown },
 }
 
 /**
@@ -79,7 +79,7 @@ export type GridAction = {
  * @param props
  * @constructor
  */
-export default function DataGrid(props:DataGridProps): ReactElement {
+export default function DataGrid(props: DataGridProps): ReactElement {
     const {
         data,
         className,
@@ -88,6 +88,8 @@ export default function DataGrid(props:DataGridProps): ReactElement {
         nullable,
         alternateRows,
         columnSizing,
+        rowHeight,
+        pageSize,
     } = props;
 
     const gridRef = useRef<HTMLDivElement>(null);
@@ -123,20 +125,10 @@ export default function DataGrid(props:DataGridProps): ReactElement {
     //====================================== Effects
     useStorageClipboard();
 
-    /*
-    useEffect(() => {
-        if (gridRef.current != null && layoutManager.fitContainer(gridRef.current)) {
-            gridDispatch({type: "fitContainer"});
-        }
-    }, [gridRef.current]);
-
-     */
-
-
     //====================================== Event handlers
     const onKeyDown = (e: KeyboardEvent) => {
         const ctrlKey = e.ctrlKey || e.metaKey;
-        switch(e.key) {
+        switch (e.key) {
             case "y": {
                 if (ctrlKey) {
                     e.stopPropagation();
@@ -208,10 +200,20 @@ export default function DataGrid(props:DataGridProps): ReactElement {
                 )}
                 onKeyDown={onKeyDown}
             >
-                {columns}
-                <Virtualizer data={data}>
-                    {rows => renderRows(rows, columns, alternateRows)}
-                </Virtualizer>
+                <div className={joinCss(
+                    styles.row,
+                    stickyHeaders ? styles.stickyHeaders : ""
+                )}>
+                    {columns}
+                </div>
+                <Virtualizer
+                    data={data.getAll()}
+                    root={gridRef.current?.parentElement}
+                    offset={pageSize * rowHeight}
+                    pageSize={8}
+                    rowHeight={rowHeight}
+                    renderer={rows => renderRows(rows, columns, alternateRows)}
+                />
             </div>
             {layoutManager.getFooter() ?? ""}
         </GridContext.Provider>
@@ -228,8 +230,9 @@ DataGrid.defaultProps = {
 
 
 // ==================================== Private
-function renderRows(rows: ObservableList<Struct>, columns: ReactElement[], alternate: boolean): ReactElement[] {
-    return rows.getAll().map((row, index) => (
+function renderRows(rows: Record<Struct>[], columns: ReactElement[], alternate: boolean): ReactElement[] {
+
+    return rows.map((row, index) => (
         <RowFactory
             key={index}
             rowIndex={index}

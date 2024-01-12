@@ -1,6 +1,6 @@
+import React, {ReactElement} from "react";
 import {Record} from "./ObservableList";
 import {Struct} from "../types/types";
-import React, {ReactElement} from "react";
 import CellFactory from "./cells/CellFactory";
 import {joinCss} from "./util/utils";
 import styles from "./DataGrid.css";
@@ -13,7 +13,7 @@ type RowFactoryProps = {
     className?: string,
 }
 
-export default function RowFactory(props: RowFactoryProps): ReactElement[] {
+export default function RowFactory(props: RowFactoryProps): ReactElement {
     const {
         row,
         rowIndex,
@@ -22,17 +22,21 @@ export default function RowFactory(props: RowFactoryProps): ReactElement[] {
         alternateRows,
     } = props;
 
-    return columns.map((col, index) => (
-        <CellFactory
-            {...col.props}
-            key={`${rowIndex}:${index}`}
-            row={row}
-            name={col.props.name}
-            rowIndex={rowIndex}
-            colIndex={index}
-            className={joinCss(className, alternateRows && rowIndex % 2 > 0 ? styles.alternate : "")}
-        />
-    ));
+    return (
+        <div className={joinCss(styles.row, alternateRows && rowIndex % 2 !== 0 ? styles.alternate : "")}>
+            {columns.map((col, index) => (
+                <CellFactory
+                    {...col.props}
+                    key={`${rowIndex}:${index}`}
+                    row={row}
+                    name={col.props.name}
+                    rowIndex={rowIndex}
+                    colIndex={index}
+                    className={className}
+                />
+            ))}
+        </div>
+    )
 }
 
 RowFactory.defaultProps = {

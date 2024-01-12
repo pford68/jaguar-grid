@@ -71,8 +71,6 @@ export type TableColumnProps<T extends Struct> = {
     onResize?: (colName: string, delta: number) => void,
     /** The HTML title attribute */
     title: boolean,
-    /** Whether text should wrap. */
-    wrap: boolean,
 } & ColumnConfigurableProps<T>;
 
 

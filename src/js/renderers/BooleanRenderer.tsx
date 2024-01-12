@@ -23,7 +23,7 @@ export default function BooleanRenderer(props: BooleanRendererProps): React.Reac
     const inputProps = {
         name,
         value: (value === true ? "true" : "false"),
-        className: joinCss(styles.date, className),
+        className: joinCss(styles.boolean, className),
         // "switch" is weeded out, but format == switch is handled later on.
         type: format,
         checked: value === true,
