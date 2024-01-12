@@ -21,6 +21,7 @@ import {EditMode, FocusMode} from "./modes";
 import useRegistry from "./useRegistry";
 import useCellFactoryReducer from "./useCellFactoryReducer";
 import usePreviousState from "./usePreviousState";
+import {PageContext} from "../PageContext";
 
 
 export type ColumnConfigurableProps<T extends Struct> = {
@@ -59,6 +60,8 @@ export type ColumnConfigurableProps<T extends Struct> = {
     placeholder?: string,
     /** Used by numeric renderers */
     precision?: number,
+    /** Whether text should wrap. */
+    wrap?: boolean,
 }
 
 /**
@@ -102,6 +105,7 @@ export default function CellFactory<T extends Struct>(props: CellFactoryProps<T>
         onClick: onClickProp,
         validator,
         required,
+        wrap,
     } = props;
     const gridContext = useContext(GridContext);
     const {
@@ -116,6 +120,7 @@ export default function CellFactory<T extends Struct>(props: CellFactoryProps<T>
 
     const focusMode = new FocusMode(gridContext);
     const editMode = new EditMode(gridContext);
+    const pageContext = useContext(PageContext);
 
     // =============================================== Refs
     const ref = useRef<HTMLDivElement>(null);
@@ -129,16 +134,21 @@ export default function CellFactory<T extends Struct>(props: CellFactoryProps<T>
     });
     const previousActiveState = usePreviousState({watch: state.active});
     const [selected, setSelected] = useState(false);
-    const rowCount = items?.length ?? 0;
-    const value = items?.get(rowIndex)?.get(name);
+    const value = row.get(name);
 
     //==================================================== Effects
     useEffect(() => {
         if (ref.current != null) {
             const parent = ref.current.parentElement;
-            if (parent != null && columnWidths.get(name) == null) {
+            const contextWidth = columnWidths.get(name);
+            if (parent != null && pageContext.page === 0) {
                 const width = parent.getBoundingClientRect().width;
-                parent.style.width = `${width}px`;
+                parent.style.width = `${Math.max(width, contextWidth ?? 0)}px`;
+                if (contextWidth == null || width > contextWidth) {
+                    columnWidths.set(name, width);
+                }
+            } else if (parent != null) {
+                parent.style.width = contextWidth ? `${contextWidth}px` : "auto";
             }
         }
         return () => {
@@ -235,8 +245,6 @@ export default function CellFactory<T extends Struct>(props: CellFactoryProps<T>
     const {top, right, bottom, left} = selectionModel?.edges ?? {};
     const finalClass = joinCss(
         styles.cell,
-        rowIndex === rowCount - 1 ? styles.lastRow : "",
-        colIndex === gridContext.columnNames.length - 1 ? styles.lastColumn : "",
         selected ? styles.selected : "",
         rowIndex === top ? styles.top : "",
         rowIndex === bottom ? styles.bottom : "",
@@ -245,6 +253,7 @@ export default function CellFactory<T extends Struct>(props: CellFactoryProps<T>
         state.active ? styles.active : "",
         gridContext.pinned.has(name) ? styles.stickyColumn : "",
         gridContext.pinned.size - 1 === colIndex ? styles.divider : "",
+        wrap === false ? styles.nowrap : "",
         className,
     );
     const rendererClass = joinCss(
@@ -329,5 +338,6 @@ export default function CellFactory<T extends Struct>(props: CellFactoryProps<T>
 }
 CellFactory.defaultProps = {
     type: "string",
+    wrap: false,
 }
 
