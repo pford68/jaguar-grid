@@ -129,7 +129,6 @@ export default function CellFactory<T extends Struct>(props: CellFactoryProps<T>
     });
     const previousActiveState = usePreviousState({watch: state.active});
     const [selected, setSelected] = useState(false);
-    const rowCount = items?.length ?? 0;
     const value = items?.get(rowIndex)?.get(name);
 
     //==================================================== Effects

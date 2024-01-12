@@ -95,7 +95,6 @@ function VirtualPage<T extends Struct>(props: PageProps<T>): ReactElement {
     const {
         data,
         rowHeight,
-        pageSize,
         renderer,
         observer,
         index,

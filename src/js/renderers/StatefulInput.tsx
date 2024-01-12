@@ -42,7 +42,7 @@ type StatefulInputProps = {
  * @param [ref]
  * @constructor
  */
-export default function StatefulInput<T>(props: StatefulInputProps, ref?: Ref<HTMLInputElement>): ReactElement {
+export default function StatefulInput(props: StatefulInputProps, ref?: Ref<HTMLInputElement>): ReactElement {
     const {
         name,
         value: initValue,
