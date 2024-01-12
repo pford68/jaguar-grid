@@ -27,6 +27,7 @@ export interface Command<T> {
     getParameters(): T[];
     icon?: string,
     name?: string,
+    shortCut?: string,
 }
 
 
