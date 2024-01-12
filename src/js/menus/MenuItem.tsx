@@ -14,8 +14,11 @@ export default function MenuItem<T>(props: MenuItemProps<T>): ReactElement {
             className={styles.menuItem}
             onClick={command.execute}
         >
-            <span>{command.icon}</span>
-            <span>{command.name}</span>
+            <span>
+                <span>{command.icon}</span>
+                <span>{command.name}</span>
+            </span>
+            <span>{command.shortCut}</span>
         </div>
     )
 }
