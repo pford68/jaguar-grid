@@ -37,7 +37,6 @@ type Story = StoryObj<PropsAndArgs>;
 const defaultRenderer = (args: PropsAndArgs) => {
     const props = {...args, width: undefined};
     return (
-        <Container height={500} resizable border>
         <DataGrid {...props}>
             <TableColumn name="firstName" text="First Name" validator={v => v != "Bob"} />
             <TableColumn name="lastName" text="Last Name" required />
@@ -63,7 +62,6 @@ const defaultRenderer = (args: PropsAndArgs) => {
                 }}
             />
         </DataGrid>
-        </Container>
     );
 };
 
@@ -76,7 +74,7 @@ const airlineSafetyRenderer = (args: PropsAndArgs) => {
         <section ref={containerRef} style={{height: `${args.height}px`}}>
             <Container height={500} resizable border>
                 <DataGrid {...props}>
-                    <TableColumn type="string" name="airline" text="Airline" sticky />
+                    <TableColumn type="string" name="airline" text="Airline" sticky wrap={false} />
                     <TableColumn type="number" name="avail_seat_km_per_week" text="Available Seats"   />
                     <TableColumn type="number" name="incidents_85_99" text="Incidents 1999" />
                     <TableColumn type="number" name="fatal_accidents_85_99" text="Fatal Accidents 1999" />
