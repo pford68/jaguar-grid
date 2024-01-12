@@ -4,6 +4,9 @@ import {Record} from "../ObservableList";
 
 export default class CutCommand<T extends Struct> extends CopyCommand<T> {
 
+    icon: string = "cut";
+    name: string = "Cut";
+    readonly shortCut: string = "&#8984+x";
     readonly #previous: {id: string, clone: Record<T>}[];
 
     constructor(selectedItems: Record<T>[]) {
