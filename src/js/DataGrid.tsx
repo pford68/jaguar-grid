@@ -241,7 +241,6 @@ DataGrid.defaultProps = {
 
 // ==================================== Private
 function renderRows(rows: Record<Struct>[], columns: ReactElement[], alternate: boolean): ReactElement[] {
-    console.log(rows.map(d => d.getAll()))
 
     return rows.map((row, index) => (
         <RowFactory
