@@ -13,6 +13,7 @@ export default class SaveCommand<T extends Struct>
 {
     readonly icon: string = "save";
     readonly name: string = "SaveCommand";
+    readonly shortCut: string = "&#8984+s";
     readonly #items: ObservableList<T>;
 
     constructor(items: ObservableList<T>) {

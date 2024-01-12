@@ -16,6 +16,7 @@ export default class CopyCommand<T extends Struct>
 {
     icon: string = "copy";
     name: string = "Copy";
+    readonly shortCut: string = "&#8984+c";
     readonly #selectedItems: Record<T>[];
     static TOKEN: string = uuid();
 

@@ -16,6 +16,7 @@ export default class PasteCommand<T extends Struct>
 {
     readonly icon: string = "paste";
     readonly name: string = "Paste";
+    readonly shortCut: string = "&#8984+v";
     readonly #previous: {id: string, clone: Record<T>}[];
     #items: ObservableList<T>;
 
