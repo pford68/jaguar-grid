@@ -90,7 +90,7 @@ export default function StatefulInput(props: StatefulInputProps, ref?: Ref<HTMLI
             // @ts-expect-error: refs type is not recognized.  It's a todo.
             ref={ref?.current !== undefined ? ref : undefined}
             value={value ?? initValue}
-            onInput={(e) => {
+            onInput={e => {
                 const {target} = e;
                 if (target instanceof HTMLInputElement) {
                     const updatedValue = target.value ?? null;
