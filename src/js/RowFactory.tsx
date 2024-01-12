@@ -1,6 +1,6 @@
+import React, {ReactElement} from "react";
 import {Record} from "./ObservableList";
 import {Struct} from "../types/types";
-import React, {ReactElement} from "react";
 import CellFactory from "./cells/CellFactory";
 import {joinCss} from "./util/utils";
 import styles from "./DataGrid.css";

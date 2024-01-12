@@ -125,16 +125,6 @@ export default function DataGrid(props: DataGridProps): ReactElement {
     //====================================== Effects
     useStorageClipboard();
 
-    /*
-    useEffect(() => {
-        if (gridRef.current != null && layoutManager.fitContainer(gridRef.current)) {
-            gridDispatch({type: "fitContainer"});
-        }
-    }, [gridRef.current]);
-
-     */
-
-
     //====================================== Event handlers
     const onKeyDown = (e: KeyboardEvent) => {
         const ctrlKey = e.ctrlKey || e.metaKey;

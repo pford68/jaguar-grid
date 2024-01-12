@@ -3,6 +3,7 @@ import {Record} from "./ObservableList";
 import {Struct} from "../types/types";
 import styles from "./DataGrid.css";
 import {Emitter, Observable} from "./Observable";
+import {PageContext} from "./PageContext";
 
 type Renderer = (data: Record<Struct>[]) => ReactElement[];
 
@@ -128,23 +129,31 @@ function VirtualPage<T extends Struct>(props: PageProps<T>): ReactElement {
     }, [observer, ref.current]);
 
 
-    return visible
-        ? (
-            <div
-                ref={ref}
-                className={styles.page}
-                style={{height: `${height}px`}}
-                data-page-index={index}
-            >
-                {renderer(data)}
-            </div>
-        )
-        : (
-            <div
-                ref={ref}
-                className={styles.page}
-                style={{display: "block", height: `${height}px`, minHeight: `${height}px`}}
-                data-page-index={index}
-            />
-        );
+    return (
+        <PageContext.Provider value={{
+            page: index,
+        }}>
+            {
+                visible
+                    ? (
+                        <div
+                            ref={ref}
+                            className={styles.page}
+                            style={{height: `${height}px`}}
+                            data-page-index={index}
+                        >
+                            {renderer(data)}
+                        </div>
+                    )
+                    : (
+                        <div
+                            ref={ref}
+                            className={styles.page}
+                            style={{display: "block", height: `${height}px`, minHeight: `${height}px`}}
+                            data-page-index={index}
+                        />
+                    )
+            }
+        </PageContext.Provider>
+    );
 }

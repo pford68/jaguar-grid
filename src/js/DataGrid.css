@@ -96,12 +96,6 @@
 .cell:focus, .cell:focus-within {
     user-select: text;
 }
-.cell.lastRow {
-    border-bottom: none;
-}
-.cell.lastColumn {
-    border-right: none;
-}
 .cell > [tabindex="-1"] {
     width: 100%;
     height: 100%;
@@ -137,6 +131,21 @@
 .cell .invalid {
     border: 1px solid red;
 }
+
+
+.grid .page:last-child .row:last-child .cell {
+    border-bottom: none;
+}
+.grid .row .cell:last-child {
+    border-right: none;
+}
+
+.cell.nowrap  > [tabindex="-1"] .inactive {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 
 /* -------------------------- Selected cells ---------*/
 .cell.selected {
