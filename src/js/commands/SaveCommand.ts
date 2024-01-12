@@ -12,7 +12,7 @@ export default class SaveCommand<T extends Struct>
     implements Command<PartialUpdate<T>>
 {
     readonly icon: string = "save";
-    readonly name: string = "SaveCommand";
+    readonly name: string = "Save";
     readonly shortCut: string = "&#8984+s";
     readonly #items: ObservableList<T>;
 
