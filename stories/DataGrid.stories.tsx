@@ -37,6 +37,7 @@ type Story = StoryObj<PropsAndArgs>;
 const defaultRenderer = (args: PropsAndArgs) => {
     const props = {...args, width: undefined};
     return (
+        <Container height={500} resizable border>
         <DataGrid {...props}>
             <TableColumn name="firstName" text="First Name" validator={v => v != "Bob"} />
             <TableColumn name="lastName" text="Last Name" required />
@@ -62,6 +63,7 @@ const defaultRenderer = (args: PropsAndArgs) => {
                 }}
             />
         </DataGrid>
+        </Container>
     );
 };
 

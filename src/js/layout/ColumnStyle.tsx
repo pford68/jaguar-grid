@@ -37,6 +37,11 @@ function renderAutoStyle(columns: ReactElement[], maxWidth?: number): ReactEleme
                  grid-template-columns: ${widths.join(" ")};
               }`
             }
+            {
+                `.${styles.row}, .${styles.page} {
+                 grid-column: span ${columns.length};
+              }`
+            }
             {maxWidth != null ? `.cell {max-width: ${maxWidth}px}` : ""}
         </style>
     );
@@ -49,6 +54,11 @@ function rendererEqualStyle(columnCount: number, maxWidth?: number): ReactElemen
                `.${styles.grid} {
                   grid-template-columns: repeat(${columnCount}, 1fr);
                }`
+            }
+            {
+                `.${styles.row}, .${styles.page} {
+                 grid-column: span ${columnCount};
+              }`
             }
             {maxWidth != null ? `.cell {max-width: ${maxWidth}px}` : ""}
         </style>

@@ -235,8 +235,8 @@ export default function CellFactory<T extends Struct>(props: CellFactoryProps<T>
     const {top, right, bottom, left} = selectionModel?.edges ?? {};
     const finalClass = joinCss(
         styles.cell,
-        rowIndex === rowCount - 1 ? styles.lastRow : "",
-        colIndex === gridContext.columnNames.length - 1 ? styles.lastColumn : "",
+        //rowIndex === rowCount - 1 ? styles.lastRow : "",
+        //colIndex === gridContext.columnNames.length - 1 ? styles.lastColumn : "",
         selected ? styles.selected : "",
         rowIndex === top ? styles.top : "",
         rowIndex === bottom ? styles.bottom : "",
