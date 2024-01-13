@@ -43,7 +43,7 @@ const defaultRenderer = (args: PropsAndArgs) => {
             <TableColumn type="currency" name="amount" text="Amount" />
             <TableColumn type="number" name="age" text="Age" />
             <TableColumn name="active" text="Active" />
-            <TableColumn name="lastUpdated" text="Last Updated" width={100} />
+            <TableColumn type="date" name="lastUpdated" text="Last Updated" width={100} />
             <TableColumn
                 name="measurements"
                 text="Height"
