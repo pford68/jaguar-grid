@@ -1,4 +1,4 @@
-import {createContext, Dispatch} from "react";
+import {createContext, Dispatch, RefObject} from "react";
 import FocusModel from "./FocusModel";
 import SelectionModel from "./SelectionModel";
 import ObservableList from "./ObservableList";
@@ -24,6 +24,7 @@ export type GridContextType = {
     offsets: Map<string, number>,
     columnWidths: Map<string, number>,
     columnSizing: "auto" | "equal" | "max-content",
+    gridRef?: RefObject<HTMLDivElement>,
 }
 export const initialGridContext: GridContextType = {
     resizedBy: 0,

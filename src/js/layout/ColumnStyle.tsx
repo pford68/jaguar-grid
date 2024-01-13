@@ -1,4 +1,4 @@
-import React, {ReactElement, useContext, useEffect} from "react";
+import React, {ReactElement, useContext, useEffect, useState} from "react";
 import styles from "../DataGrid.css";
 import {GridContext, GridContextType} from "../GridContext";
 
@@ -16,10 +16,11 @@ type ColumnStyleProps = {
 export default function ColumnStyle(props: ColumnStyleProps) {
     const {type, columns, maxWidth} = props;
     const gridContext = useContext(GridContext);
+    const [id, setId] = useState(new Date().getTime());
 
     useEffect(() => {
-        console.log("width", gridContext.columnWidths)
-        renderAutoStyle(columns, gridContext, maxWidth);
+        console.log("columnWidths updates", gridContext.columnWidths);
+        setId(new Date().getTime())
     }, [gridContext.columnWidths]);
 
 

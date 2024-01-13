@@ -57,6 +57,7 @@
     grid-template-rows: repeat(3, 33%);
     align-items: center;
     border: 1px solid silver;
+    min-width: min-content;
 }
 
 .header.resizable {
@@ -198,8 +199,8 @@
 }
 
 .columnResizer {
-    grid-area: right;
-    width: 2px;
+    grid-area: gutter;
+    width: 5px;
     height: 100%;
     cursor: col-resize;
 }

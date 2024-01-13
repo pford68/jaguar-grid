@@ -54,7 +54,7 @@ export type TableColumnProps<T extends Struct> = {
      */
     headerRenderer?: ReactElement,
     /**
-     * For showing the full header text it's abbreviated.
+     * For showing the full header text if abbreviated.
      * @todo
      */
     altText?: string,
@@ -90,6 +90,7 @@ export default function TableColumn<T extends Struct>(props: TableColumnProps<T>
         wrap,
         title,
         sticky,
+        onResize,
     } = props;
 
     const ref = useRef<HTMLDivElement>(null);
@@ -103,10 +104,16 @@ export default function TableColumn<T extends Struct>(props: TableColumnProps<T>
         stickyHeaders,
         sortColumns,
         focusModel,
+        gridRef,
     } = gridContext;
     const active = sortColumns?.[0] === name;
     let sortDirection = gridContext.sortDirection;
 
+    useEffect(() => {
+        if (ref.current != null){
+            ref.current.style.width = `${gridContext.columnWidths.get(name)}px`
+        }
+    }, [gridContext.columnWidths]);
 
     useEffect(() => {
         if (pin.pushed) {
@@ -152,6 +159,20 @@ export default function TableColumn<T extends Struct>(props: TableColumnProps<T>
     const colIndex = gridContext.columnNames
         .findIndex(col => col === name);
 
+    const handleResize = (width: number) => {
+        if (ref.current != null) {
+            let {width: prevWidth} = ref.current.getBoundingClientRect();
+            prevWidth = gridContext.columnWidths.get(name) ?? prevWidth;
+            gridContext.columnWidths.set(name, width);
+            ref.current.style.width = `${width}px`;
+            if (gridRef?.current != null && width < prevWidth) {
+                const {width:gridWidth} = gridRef.current.getBoundingClientRect();
+                //gridRef.current.style.width = `${gridWidth + (width - prevWidth)}px`;
+            }
+            gridDispatch?.({type: "update"});
+        }
+    }
+
     return  (
         <div
             ref={ref}
@@ -174,7 +195,7 @@ export default function TableColumn<T extends Struct>(props: TableColumnProps<T>
                 {sortable ? <SortButton active={active} sortDirection={sortDirection} /> : ""}
             </div>
             <Pin parentRef={ref} name={name} active={pin.pushed} updater={setPin}/>
-            {resizable ? <ColumnResizer name={name} /> : ""}
+            {resizable ? <ColumnResizer targetRef={ref} onResize={handleResize} /> : ""}
         </div>
     );
 }

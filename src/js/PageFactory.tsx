@@ -5,9 +5,19 @@ import styles from "./DataGrid.css";
 import {Emitter, Observable} from "./Observable";
 import {PageContext} from "./PageContext";
 
-type Renderer = (data: Record<Struct>[]) => ReactElement[];
+export type PageData = {
+    data: Record<Struct>[],
+    pageIndex: number,
+    pageSize: number,
+};
 
-type VirtualizerProps<T extends Struct> = {
+type Renderer = (pageData: PageData) => ReactElement[];
+
+type IntersectionResult = {
+    visiblePages: Set<number>,
+};
+
+type PageFactoryProps<T extends Struct> = {
     data: Record<T>[],
     renderer: Renderer,
     pageSize: number,
@@ -15,9 +25,14 @@ type VirtualizerProps<T extends Struct> = {
     root?: HTMLElement | undefined | null,
     offset?: number,
     threshold?: number | number[],
-}
+};
 
-export default function Virtualizer<T extends Struct>(props: VirtualizerProps<T>): ReactElement[] {
+/**
+ *
+ * @param props
+ * @constructor
+ */
+export default function PageFactory<T extends Struct>(props: PageFactoryProps<T>): ReactElement[] {
     const {
         renderer,
         data,
@@ -43,7 +58,7 @@ export default function Virtualizer<T extends Struct>(props: VirtualizerProps<T>
     const buckets = useRef<number[][]>(initBuckets);
 
     return buckets.current?.map((bucket, index) => (
-        <VirtualPage
+        <Page
             key={`${new Date().getTime()}:${index}`}
             data={data.slice(...bucket)}
             rowHeight={rowHeight}
@@ -55,32 +70,12 @@ export default function Virtualizer<T extends Struct>(props: VirtualizerProps<T>
         />
     ))
 }
-Virtualizer.defaultProps = {
+PageFactory.defaultProps = {
     threshold: 0,
 }
 
 
-function intersectionCallback(
-    emitter: RefObject<Emitter<IntersectionResult>>,
-    visiblePages: RefObject<Set<number>>,
-    entries: IntersectionObserverEntry[]
-) {
-    entries.forEach(entry => {
-        const el = entry.target;
-        const index = el.getAttribute("data-page-index");
-        if (entry.isIntersecting) {
-            visiblePages.current?.add(Number(index));
-        } else {
-            visiblePages.current?.delete(Number(index));
-        }
-    });
-    emitter.current?.emit("intersected",{visiblePages: visiblePages.current ?? new Set()});
-}
 
-
-type IntersectionResult = {
-    visiblePages: Set<number>,
-}
 
 type PageProps<T extends Struct> = {
     data: Record<T>[],
@@ -90,12 +85,18 @@ type PageProps<T extends Struct> = {
     observer: IntersectionObserver,
     emitter: RefObject<Observable<IntersectionResult>>,
     index: number,
-}
+};
 
-function VirtualPage<T extends Struct>(props: PageProps<T>): ReactElement {
+/**
+ *
+ * @param props
+ * @constructor
+ */
+function Page<T extends Struct>(props: PageProps<T>): ReactElement {
     const {
         data,
         rowHeight,
+        pageSize,
         renderer,
         observer,
         index,
@@ -142,7 +143,7 @@ function VirtualPage<T extends Struct>(props: PageProps<T>): ReactElement {
                             style={{height: `${height}px`}}
                             data-page-index={index}
                         >
-                            {renderer(data)}
+                            {renderer({data, pageIndex: index, pageSize})}
                         </div>
                     )
                     : (
@@ -156,4 +157,22 @@ function VirtualPage<T extends Struct>(props: PageProps<T>): ReactElement {
             }
         </PageContext.Provider>
     );
+}
+
+
+function intersectionCallback(
+    emitter: RefObject<Emitter<IntersectionResult>>,
+    visiblePages: RefObject<Set<number>>,
+    entries: IntersectionObserverEntry[]
+) {
+    entries.forEach(entry => {
+        const el = entry.target;
+        const index = el.getAttribute("data-page-index");
+        if (entry.isIntersecting) {
+            visiblePages.current?.add(Number(index));
+        } else {
+            visiblePages.current?.delete(Number(index));
+        }
+    });
+    emitter.current?.emit("intersected",{visiblePages: visiblePages.current ?? new Set()});
 }

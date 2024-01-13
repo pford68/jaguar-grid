@@ -1,5 +1,5 @@
 import React, {ReactElement, KeyboardEvent, useReducer, useRef} from "react";
-import Virtualizer from "./Virtualizer";
+import PageFactory, {PageData} from "./PageFactory";
 import ObservableList, {Record} from "./ObservableList";
 import type {Struct} from "../types/types";
 import styles from "./DataGrid.css";
@@ -176,6 +176,7 @@ export default function DataGrid(props: DataGridProps): ReactElement {
     return (
         <GridContext.Provider value={{
             ...state,
+            gridRef,
             gridDispatch,
             items: data,
             columnNames: colNames,
@@ -206,13 +207,13 @@ export default function DataGrid(props: DataGridProps): ReactElement {
                 )}>
                     {columns}
                 </div>
-                <Virtualizer
+                <PageFactory
                     data={data.getAll()}
                     root={gridRef.current?.parentElement}
                     offset={pageSize * rowHeight}
                     pageSize={8}
                     rowHeight={rowHeight}
-                    renderer={rows => renderRows(rows, columns, alternateRows)}
+                    renderer={pageData => renderRows(pageData, columns, alternateRows)}
                 />
             </div>
             {layoutManager.getFooter() ?? ""}
@@ -230,12 +231,13 @@ DataGrid.defaultProps = {
 
 
 // ==================================== Private
-function renderRows(rows: Record<Struct>[], columns: ReactElement[], alternate: boolean): ReactElement[] {
-
+function renderRows(pageData: PageData, columns: ReactElement[], alternate: boolean): ReactElement[] {
+    const {pageIndex, pageSize, data: rows} = pageData;
+    const start = pageIndex * pageSize;
     return rows.map((row, index) => (
         <RowFactory
             key={index}
-            rowIndex={index}
+            rowIndex={start + index}
             row={row}
             columns={columns}
             alternateRows={alternate}
