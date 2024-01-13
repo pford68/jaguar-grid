@@ -1,17 +1,12 @@
-import React, {ReactElement, RefObject, useEffect, useRef, useState} from "react";
+import React, {ReactElement, RefObject, useEffect, useRef, useState, useContext} from "react";
 import {Record} from "./ObservableList";
-import {Struct} from "../types/types";
+import {Coordinates, Struct} from "../types/types";
 import styles from "./DataGrid.css";
 import {Emitter, Observable} from "./Observable";
 import {PageContext} from "./PageContext";
-
-export type PageData = {
-    data: Record<Struct>[],
-    pageIndex: number,
-    pageSize: number,
-};
-
-type Renderer = (pageData: PageData) => ReactElement[];
+import RowFactory from "./RowFactory";
+import {GridContext} from "./GridContext";
+import {SelectionChange} from "./SelectionModel";
 
 type IntersectionResult = {
     visiblePages: Set<number>,
@@ -19,7 +14,6 @@ type IntersectionResult = {
 
 type PageFactoryProps<T extends Struct> = {
     data: Record<T>[],
-    renderer: Renderer,
     pageSize: number,
     rowHeight: number,
     root?: HTMLElement | undefined | null,
@@ -28,13 +22,15 @@ type PageFactoryProps<T extends Struct> = {
 };
 
 /**
+ * Divides the dataset between "pages" and renders only the data for pages
+ * currently visible in the viewport.  In other words, this component virtualizes
+ * the datagrid.
  *
  * @param props
  * @constructor
  */
 export default function PageFactory<T extends Struct>(props: PageFactoryProps<T>): ReactElement[] {
     const {
-        renderer,
         data,
         rowHeight,
         pageSize,
@@ -52,7 +48,7 @@ export default function PageFactory<T extends Struct>(props: PageFactoryProps<T>
     }));
 
     const initBuckets = [];
-    for (let i = 0; i < data.length; i += pageSize + 1) {
+    for (let i = 0; i < data.length; i += pageSize) {
         initBuckets.push([i, i + pageSize]);
     }
     const buckets = useRef<number[][]>(initBuckets);
@@ -60,15 +56,14 @@ export default function PageFactory<T extends Struct>(props: PageFactoryProps<T>
     return buckets.current?.map((bucket, index) => (
         <Page
             key={`${new Date().getTime()}:${index}`}
-            data={data.slice(...bucket)}
+            rows={data.slice(...bucket)}
             rowHeight={rowHeight}
             pageSize={pageSize}
-            renderer={renderer}
             observer={observer.current}
             emitter={emitter}
-            index={index}
+            pageIndex={index}
         />
-    ))
+    ));
 }
 PageFactory.defaultProps = {
     threshold: 0,
@@ -78,13 +73,12 @@ PageFactory.defaultProps = {
 
 
 type PageProps<T extends Struct> = {
-    data: Record<T>[],
+    rows: Record<T>[],
     rowHeight: number,
     pageSize: number,
-    renderer: Renderer,
     observer: IntersectionObserver,
     emitter: RefObject<Observable<IntersectionResult>>,
-    index: number,
+    pageIndex: number,
 };
 
 /**
@@ -94,21 +88,47 @@ type PageProps<T extends Struct> = {
  */
 function Page<T extends Struct>(props: PageProps<T>): ReactElement {
     const {
-        data,
+        rows,
         rowHeight,
         pageSize,
-        renderer,
         observer,
-        index,
+        pageIndex,
         emitter,
     } = props;
+    const gridContext = useContext(GridContext);
+    const {selectionModel, focusModel} = gridContext
     const [visible, setVisible] = useState(false);
-    const height = rowHeight * data.length;
-    const ref =  useRef(null);
+    const height = rowHeight * rows.length;
+    const ref =  useRef<HTMLDivElement>(null);
+    const start = pageIndex * pageSize;
+    const end = (start + rows.length);
+
+    /*
+     When focus jumps to a non-visible page, this scrolls the page into view,
+     causing the page to intersect and fill with data.
+    */
+    useEffect(() => {
+        const onFocusChanged = (coords: Coordinates | undefined) => {
+            const {rowIndex} = coords ?? {};
+            if (rowIndex != null && !visible && rowIndex >= start && rowIndex <= end) {
+                ref.current?.scrollIntoView(false);
+            }
+        }
+
+        focusModel?.on("focusChanged", onFocusChanged);
+
+        return () => {
+            focusModel?.off("focusChanged", onFocusChanged);
+        }
+    }, [
+        focusModel,
+        selectionModel,
+    ]);
+
 
     useEffect(() => {
         const onIntersecting = (result: IntersectionResult | undefined):void => {
-            setVisible(result?.visiblePages?.has(index) ?? false);
+            setVisible(result?.visiblePages?.has(pageIndex) ?? false);
         }
         emitter.current?.on("intersected", onIntersecting);
 
@@ -117,6 +137,8 @@ function Page<T extends Struct>(props: PageProps<T>): ReactElement {
         };
     }, [emitter.current]);
 
+
+    /* IntersectionObserver */
     useEffect(() => {
         if (ref.current) {
             observer.observe(ref.current);
@@ -132,7 +154,9 @@ function Page<T extends Struct>(props: PageProps<T>): ReactElement {
 
     return (
         <PageContext.Provider value={{
-            page: index,
+            page: pageIndex,
+            start,
+            end,
         }}>
             {
                 visible
@@ -141,9 +165,15 @@ function Page<T extends Struct>(props: PageProps<T>): ReactElement {
                             ref={ref}
                             className={styles.page}
                             style={{height: `${height}px`}}
-                            data-page-index={index}
+                            data-page-index={pageIndex}
                         >
-                            {renderer({data, pageIndex: index, pageSize})}
+                            {rows.map((row, rowIndex) => (
+                                <RowFactory
+                                    key={rowIndex}
+                                    rowIndex={start + rowIndex}
+                                    row={row}
+                                />
+                            ))}
                         </div>
                     )
                     : (
@@ -151,7 +181,7 @@ function Page<T extends Struct>(props: PageProps<T>): ReactElement {
                             ref={ref}
                             className={styles.page}
                             style={{display: "block", height: `${height}px`, minHeight: `${height}px`}}
-                            data-page-index={index}
+                            data-page-index={pageIndex}
                         />
                     )
             }

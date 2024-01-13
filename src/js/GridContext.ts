@@ -1,4 +1,4 @@
-import {createContext, Dispatch, RefObject} from "react";
+import {createContext, Dispatch, ReactElement, RefObject} from "react";
 import FocusModel from "./FocusModel";
 import SelectionModel from "./SelectionModel";
 import ObservableList from "./ObservableList";
@@ -8,6 +8,7 @@ import {CommandStack} from "./util/CommandStack";
 
 export type GridContextType = {
     items: ObservableList<Struct> | undefined,
+    columns: ReactElement[],
     columnNames: string[],
     sortColumns: string[],
     sortDirection: string,
@@ -25,9 +26,11 @@ export type GridContextType = {
     columnWidths: Map<string, number>,
     columnSizing: "auto" | "equal" | "max-content",
     gridRef?: RefObject<HTMLDivElement>,
+    alternateRows: boolean,
 }
 export const initialGridContext: GridContextType = {
     resizedBy: 0,
+    columns: [],
     sortColumns: [],
     sortDirection: "",
     items: undefined,
@@ -39,5 +42,6 @@ export const initialGridContext: GridContextType = {
     offsets: new Map(),
     columnWidths: new Map(),
     columnSizing: "auto",
+    alternateRows: false,
 }
 export const GridContext = createContext(initialGridContext);

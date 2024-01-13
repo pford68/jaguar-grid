@@ -1,5 +1,5 @@
 import React, {ReactElement, KeyboardEvent, useReducer, useRef} from "react";
-import PageFactory, {PageData} from "./PageFactory";
+import PageFactory from "./PageFactory";
 import ObservableList, {Record} from "./ObservableList";
 import type {Struct} from "../types/types";
 import styles from "./DataGrid.css";
@@ -179,12 +179,14 @@ export default function DataGrid(props: DataGridProps): ReactElement {
             gridRef,
             gridDispatch,
             items: data,
+            columns,
             columnNames: colNames,
             columnWidths,
             selectionModel,
             stickyHeaders,
             nullable,
             columnSizing,
+            alternateRows,
         }}>
             <ColumnStyle
                 type={finalColumnSizing == "auto" || finalColumnSizing == "equal" ? finalColumnSizing : "auto"}
@@ -213,7 +215,6 @@ export default function DataGrid(props: DataGridProps): ReactElement {
                     offset={pageSize * rowHeight}
                     pageSize={8}
                     rowHeight={rowHeight}
-                    renderer={pageData => renderRows(pageData, columns, alternateRows)}
                 />
             </div>
             {layoutManager.getFooter() ?? ""}
@@ -231,20 +232,6 @@ DataGrid.defaultProps = {
 
 
 // ==================================== Private
-function renderRows(pageData: PageData, columns: ReactElement[], alternate: boolean): ReactElement[] {
-    const {pageIndex, pageSize, data: rows} = pageData;
-    const start = pageIndex * pageSize;
-    return rows.map((row, index) => (
-        <RowFactory
-            key={index}
-            rowIndex={start + index}
-            row={row}
-            columns={columns}
-            alternateRows={alternate}
-        />
-    ));
-}
-
 
 function reducer(state: GridState, action: GridAction): GridState {
     const {type, payload} = action;

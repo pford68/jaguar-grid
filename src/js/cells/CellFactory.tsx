@@ -6,7 +6,7 @@ import React, {
     useContext,
     useEffect,
     useRef,
-    useState,
+    useState, RefObject,
 } from "react";
 import {Consumer, Coordinates, Predicate, Struct} from "../../types/types";
 import {GridContext} from "../GridContext";
@@ -167,11 +167,6 @@ export default function CellFactory<T extends Struct>(props: CellFactoryProps<T>
         const onFocusChanged = (coords: Coordinates | undefined) => {
             if (coords?.colIndex === colIndex && coords?.rowIndex === rowIndex) {
                 ref.current?.focus();
-                if (ref.current?.nextElementSibling == null) {
-                    ref.current?.parentElement?.nextElementSibling?.scrollIntoView({block: "nearest", inline: "nearest"});
-                } else if (ref.current?.previousElementSibling == null) {
-                    ref.current?.parentElement?.previousElementSibling?.scrollIntoView({block: "nearest", inline: "nearest"});
-                }
             } else if (previousActiveState.current === true) {
                 // When we click on another cell, the currently active cell should deactivate.
                 dispatch({type: "deactivate"});
@@ -345,4 +340,5 @@ CellFactory.defaultProps = {
     type: "string",
     wrap: false,
 }
+
 
