@@ -74,7 +74,7 @@ const airlineSafetyRenderer = (args: PropsAndArgs) => {
         <section ref={containerRef} style={{height: `${args.height}px`}}>
             <Container height={500} resizable border>
                 <DataGrid {...props}>
-                    <TableColumn type="string" name="airline" text="Airline" sticky wrap={false} />
+                    <TableColumn type="string" name="airline" text="Airline" sticky />
                     <TableColumn type="number" name="avail_seat_km_per_week" text="Available Seats"   />
                     <TableColumn type="number" name="incidents_85_99" text="Incidents 1999" />
                     <TableColumn type="number" name="fatal_accidents_85_99" text="Fatal Accidents 1999" />

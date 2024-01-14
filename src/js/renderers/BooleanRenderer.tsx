@@ -1,6 +1,6 @@
 import React from "react";
 import {joinCss} from "../util/utils";
-import styles from "../DataGrid.css";
+import styles from "./Renderers.css";
 import {BaseRendererProps} from "./types";
 import {InputContainer as StatefulInput} from "./StatefulInput";
 import Text from "./Text";
@@ -34,7 +34,12 @@ export default function BooleanRenderer(props: BooleanRendererProps): React.Reac
     }
 
     if (format === "switch") {
-        // TODO: return a switch
+        return (
+            <label className={styles.switch}>
+                <StatefulInput {...inputProps} ref={rendererRef} type="checkbox" />
+                <span className={joinCss(styles.slider, styles.round)}></span>
+            </label>
+        )
     }
 
     const finalFormat = format === "text" || format === "checkbox" ? format : "checkbox";
