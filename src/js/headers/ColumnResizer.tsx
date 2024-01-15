@@ -1,6 +1,7 @@
 import React, {ReactElement, DragEvent, RefObject, useEffect, useRef} from "react";
 import styles from "../DataGrid.css";
 import {Consumer} from "../../types/types";
+import {joinCss} from "../util/utils";
 
 type Resizable = {
    width?: number,
@@ -11,10 +12,11 @@ type Resizable = {
 type ColumnResizerProps = {
    targetRef: RefObject<HTMLElement>,
    onResize: (delta: number) => void,
+   className?: string,
 };
 
 export default function ColumnResizer(props: ColumnResizerProps): ReactElement {
-   const {targetRef, onResize} = props;
+   const {targetRef, onResize, className} = props;
 
    const targetData = useRef<Resizable>({
       onResize,
@@ -33,7 +35,7 @@ export default function ColumnResizer(props: ColumnResizerProps): ReactElement {
 
    return (
        <div
-           className={styles.columnResizer}
+           className={joinCss(styles.columnResizer, className)}
            onDragStart={(e) => onDragStart(targetData.current, e)}
            onDragEnd={(e) => onDragEnd(targetData.current, e)}
            draggable={true}

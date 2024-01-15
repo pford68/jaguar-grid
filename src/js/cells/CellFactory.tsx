@@ -37,6 +37,7 @@ export type ColumnConfigurableProps<T extends Struct> = {
     /**
      * Whether the value can be edited.
      * @default false
+     * @deprecated
      */
     editable: boolean,
     disabled?: boolean,
@@ -253,6 +254,7 @@ export default function CellFactory<T extends Struct>(props: CellFactoryProps<T>
         gridContext.pinned.has(name) ? styles.stickyColumn : "",
         gridContext.pinned.size - 1 === colIndex ? styles.divider : "",
         wrap === false ? styles.nowrap : "",
+        type != null && styles[type] ? styles[type] : "",
         className,
     );
     const rendererClass = joinCss(

@@ -25,7 +25,7 @@ export default function ColumnStyle(props: ColumnStyleProps) {
     const widths = columns.map(col => {
         const {width, name} = col.props;
         const assignedWidth = gridContext.columnWidths.get(name) ?? width;
-        return assignedWidth != null  ? `minmax(${minWidth}px, ${assignedWidth}px)` : (type === "equal" ? "1fr" : "auto");
+        return assignedWidth != null  ? `${assignedWidth}px` : (type === "equal" ? "1fr" : "auto");
     });
 
     return (

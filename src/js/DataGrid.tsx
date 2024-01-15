@@ -120,14 +120,11 @@ export default function DataGrid(props: DataGridProps): ReactElement {
 
 
 
-    let visibleColumns = getVisibleColumns();
+    const visibleColumns = getVisibleColumns();
     const getMaxColumnWidth = useCallback(
         () => ((containerWidth ?? 0) / visibleColumns.length),
         [containerHeight, containerWidth, visibleColumns]
     );
-    visibleColumns = visibleColumns.map((col, index) => React.cloneElement(col, {
-        key: `header-${index}`,
-    }));
 
     //=================================== State
     const colNames = visibleColumns.map(col => col.props.name);

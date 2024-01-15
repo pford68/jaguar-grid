@@ -34,11 +34,13 @@ const renderDefault = (args: PropsAndArgs) => {
 };
 
 export const Primary = {
-    render: renderDefault
+    render: renderDefault,
 }
 
 export const Required  = {
     render: renderDefault,
-    validator: (v:string) => v != null && v.trim().length > 0,
+    args: {
+        validator: (v:string) => v != null && v.trim().length > 0
+    },
 }
 

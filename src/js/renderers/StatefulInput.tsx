@@ -102,7 +102,7 @@ export default function StatefulInput(props: StatefulInputProps, ref?: Ref<HTMLI
                     }
                 }
             }}
-            className={joinCss(!valid ? styles.invalid : "", className)}
+            className={joinCss(styles.input, !valid ? styles.invalid : "", className)}
         />
     );
 }

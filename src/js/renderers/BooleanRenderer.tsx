@@ -20,17 +20,19 @@ export default function BooleanRenderer(props: BooleanRendererProps): React.Reac
         validator,
     } = props;
 
+    const baseClassName = joinCss(styles.renderer, styles.boolean, className);
+
     const inputProps = {
         name,
         value: (value === true ? "true" : "false"),
-        className: joinCss(styles.boolean, className),
+        className: joinCss(baseClassName, styles.active),
         // "switch" is weeded out, but format == switch is handled later on.
         type: format,
         checked: value === true,
     };
 
     if (!active) {
-        return <Text value={value} className={className} validator={validator} />;
+        return <Text value={value} className={baseClassName} validator={validator} />;
     }
 
     if (format === "switch") {

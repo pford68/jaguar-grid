@@ -205,7 +205,19 @@
     height: 100%;
     cursor: col-resize;
 }
+.columnResizer.tooSmall {
+    cursor: e-resize;
+}
+.columnResizer.tooLarge {
+    cursor: w-resize;
+}
 
 .divider {
     border-right: 3px solid silver;
+}
+
+/* ---------------------------------- Data Types ---------- */
+.cell.number > [tabindex="-1"],
+.header.number .title {
+    justify-content: end;
 }

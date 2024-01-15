@@ -5,7 +5,7 @@ import {GridContext} from "./GridContext";
 import {DataTypes} from "../types/types";
 import {type ColumnConfigurableProps} from "./cells/CellFactory";
 import SortButton from "./headers/SortButton";
-import {SORT_DIRECTION_ASC, SORT_DIRECTION_DESC} from "./constants";
+import {MIN_COLUMN_WIDTH, SORT_DIRECTION_ASC, SORT_DIRECTION_DESC} from "./constants";
 import ColumnResizer from "./headers/ColumnResizer";
 import {joinCss} from "./util/utils";
 import Pin from "./headers/Pin";
@@ -90,8 +90,7 @@ export default function TableColumn<T extends Struct>(props: TableColumnProps<T>
         wrap,
         title,
         sticky,
-        onResize,
-        width,
+        type,
     } = props;
 
     const ref = useRef<HTMLDivElement>(null);
@@ -109,6 +108,7 @@ export default function TableColumn<T extends Struct>(props: TableColumnProps<T>
     } = gridContext;
     const active = sortColumns?.[0] === name;
     let sortDirection = gridContext.sortDirection;
+
 
     useEffect(() => {
         if (pin.pushed) {
@@ -157,7 +157,8 @@ export default function TableColumn<T extends Struct>(props: TableColumnProps<T>
     const handleResize = (delta: number) => {
         if (ref.current != null) {
             const width = ref.current.offsetWidth;
-            const newWidth = width + delta;
+            let newWidth = width + delta;
+            newWidth = newWidth < MIN_COLUMN_WIDTH ? MIN_COLUMN_WIDTH : newWidth;
             ref.current.style.width = `${newWidth}px`;
             gridContext.columnWidths.set(name, newWidth);
             gridDispatch?.({type: "update"});
@@ -175,10 +176,10 @@ export default function TableColumn<T extends Struct>(props: TableColumnProps<T>
                 stickyHeaders ? styles.stickyHeaders : "",
                 pin.pushed ? styles.stickyColumn : "",
                 gridContext.pinned.size - 1 === colIndex ? styles.divider : "",
+                type != null && styles[type] ? styles[type] : "",
             )}
             data-col-index={colIndex}
             onDragOver={onDragOver}
-            //style={{width: typeof finalWidth == "number" ? `${finalWidth}px` : finalWidth}}
         >
             <div
                 className={styles.title}
@@ -188,7 +189,15 @@ export default function TableColumn<T extends Struct>(props: TableColumnProps<T>
                 {sortable ? <SortButton active={active} sortDirection={sortDirection} /> : ""}
             </div>
             <Pin parentRef={ref} name={name} active={pin.pushed} updater={setPin}/>
-            {resizable ? <ColumnResizer targetRef={ref} onResize={handleResize} /> : ""}
+            {resizable ? (
+                <ColumnResizer
+                    targetRef={ref}
+                    onResize={handleResize}
+                    className={(ref.current?.offsetWidth ?? Number.POSITIVE_INFINITY) <= MIN_COLUMN_WIDTH
+                        ? styles.tooSmall
+                        : (ref.current?.offsetWidth ?? MIN_COLUMN_WIDTH) >= 300 ? styles.tooLarge : ""}
+                />
+            ) : ""}
         </div>
     );
 }

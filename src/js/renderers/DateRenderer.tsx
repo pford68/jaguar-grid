@@ -19,15 +19,18 @@ export default function DateRenderer(props: DateRendererProps): React.ReactEleme
         addTime,
         rendererRef,
     } = props;
+
+    const baseClassName = joinCss(styles.renderer, styles.date, className);
+
     const nextProps = {
         name,
-        className: joinCss(styles.date, props.className),
+        className: joinCss(baseClassName, styles.active),
     };
 
     const formattedValue = addTime ? new Date(Number(value)).toISOString() : toISODateString(Number(value))
 
     if (!active) {
-        return <Text value={formattedValue} className={className} validator={validator} />;
+        return <Text value={formattedValue} className={baseClassName} validator={validator} />;
     }
 
     return (
