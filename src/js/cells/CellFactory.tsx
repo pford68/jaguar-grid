@@ -111,13 +111,13 @@ export default function CellFactory<T extends Struct>(props: CellFactoryProps<T>
     } = props;
     const gridContext = useContext(GridContext);
     const {
-        selectionModel,
-        focusModel,
         nullable,
         columnWidths,
         columnSizing,
         pinned,
     } = gridContext;
+    const selectionModel = gridContext.selectionModel?.current;
+    const focusModel = gridContext.focusModel?.current;
 
     const focusMode = new FocusMode(gridContext);
     const editMode = new EditMode(gridContext);
@@ -138,6 +138,9 @@ export default function CellFactory<T extends Struct>(props: CellFactoryProps<T>
     const value = row.get(name);
 
     //==================================================== Effects
+    /*
+    Handles auto-sizing by first-page column content.
+     */
     useEffect(() => {
         if (width == null && ref.current != null) {
             const parent = ref.current.parentElement;
@@ -148,6 +151,9 @@ export default function CellFactory<T extends Struct>(props: CellFactoryProps<T>
                 if (contextWidth == null || width > contextWidth) {
                     columnWidths.set(name, width);
                 }
+            } else if (parent != null) {
+                // Setting the cell width on subsequent pages.
+                parent.style.width = `${columnWidths.get(name)}px`;
             }
         }
         return () => {
@@ -162,6 +168,10 @@ export default function CellFactory<T extends Struct>(props: CellFactoryProps<T>
     ]);
 
 
+    /*
+    Setting the focusChanged and selectionChanged listeners. Currently, the focus/selection models are allowed
+    to change during re-renderers, so we reset the listeners when changes are detected..
+     */
     useEffect(() => {
         const onFocusChanged = (coords: Coordinates | undefined) => {
             if (coords?.colIndex === colIndex && coords?.rowIndex === rowIndex) {
@@ -183,12 +193,12 @@ export default function CellFactory<T extends Struct>(props: CellFactoryProps<T>
             focusModel?.off("focusChanged", onFocusChanged);
             selectionModel?.off("selectionChanged", onSelectionChanged);
         };
-    }, [
-        selectionModel,
-        focusModel,
-    ]); // Must watch these to reset after re-rendering (e.g., sorting)
+    }, []);
 
 
+    /*
+    Resets the focus on the current cell after transitions between active and inactive states.
+     */
     useEffect(() => {
         if (state.active) {
             rendererRef.current?.focus();
@@ -201,6 +211,20 @@ export default function CellFactory<T extends Struct>(props: CellFactoryProps<T>
     }, [state.active, value]);
 
 
+    /*
+    useEffects are called in the order they appear in the code,
+    so this will follow the previous.
+     */
+    useEffect(() => {
+        focusModel?.clear();
+    }, [gridContext.sortColumns, gridContext.sortDirection]);
+
+
+    /*
+    Sets the left position for pinning. Responds to changes in the set of pinned columns,
+    but also responds to changes in the focused cell and in the active state in order to reset
+    the left value.
+     */
     useEffect(() => {
         const offset = gridContext.offsets.get(name);
         const el = ref.current?.parentElement;

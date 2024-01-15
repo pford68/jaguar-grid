@@ -103,8 +103,8 @@ export default function TableColumn<T extends Struct>(props: TableColumnProps<T>
         gridDispatch,
         stickyHeaders,
         sortColumns,
-        focusModel,
     } = gridContext;
+    const focusModel = gridContext.focusModel?.current;
     const active = sortColumns?.[0] === name;
     let sortDirection = gridContext.sortDirection;
 

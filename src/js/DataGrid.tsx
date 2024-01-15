@@ -1,4 +1,4 @@
-import React, {ReactElement, KeyboardEvent, useReducer, useRef, useCallback} from "react";
+import React, {ReactElement, KeyboardEvent, useReducer, useRef, useCallback, useEffect} from "react";
 import PageFactory from "./PageFactory";
 import ObservableList, {Record} from "./ObservableList";
 import type {Struct} from "../types/types";
@@ -42,7 +42,6 @@ export type DataGridProps = {
 export type GridState = {
     sortColumns: string[],
     sortDirection: string,
-    focusModel: FocusModel,
     undoStack: CommandStack,
     redoStack: CommandStack,
     pinned: Set<string>,
@@ -129,14 +128,14 @@ export default function DataGrid(props: DataGridProps): ReactElement {
     //=================================== State
     const colNames = visibleColumns.map(col => col.props.name);
     const rowCount = data.length;
-    const selectionModel = new SelectionModel(data)
+    const selectionModel = useRef(new SelectionModel(data));
+    const focusModel = useRef(new FocusModel(rowCount, colNames.length));
     const initSortColumn = props.sortColumn ?? visibleColumns[0].props.name;
     const initialGridState: GridState = {
         sortColumns: [initSortColumn],
         sortDirection: SORT_DIRECTION_ASC,
         undoStack: new CommandStack(),
         redoStack: new CommandStack(),
-        focusModel: new FocusModel(rowCount, colNames.length),
         pinned: new Set<string>(),
         unpinned: new Set<string>([...colNames]),
         offsets: new Map(),
@@ -148,6 +147,19 @@ export default function DataGrid(props: DataGridProps): ReactElement {
 
     //====================================== Effects
     useStorageClipboard();
+
+    useEffect(() => {
+        if (rowCount != focusModel.current.rowCount) {
+            focusModel.current.rowCount = data.length;
+        }
+        if (colNames.length != focusModel.current.columnCount) {
+            focusModel.current.columnCount = colNames.length;
+        }
+    }, [
+        data.length,
+        colNames
+    ]);
+
 
     //====================================== Event handlers
     const onKeyDown = (e: KeyboardEvent) => {
@@ -207,6 +219,7 @@ export default function DataGrid(props: DataGridProps): ReactElement {
             columnNames: colNames,
             columnWidths: columnWidths.current,
             selectionModel,
+            focusModel,
             stickyHeaders,
             nullable,
             columnSizing,
