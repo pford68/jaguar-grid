@@ -210,16 +210,7 @@ export default function CellFactory<T extends Struct>(props: CellFactoryProps<T>
         }
     }, [state.active, value]);
 
-
-    /*
-    useEffects are called in the order they appear in the code,
-    so this will follow the previous.
-     */
-    useEffect(() => {
-        focusModel?.clear();
-    }, [gridContext.sortColumns, gridContext.sortDirection]);
-
-
+  
     /*
     Sets the left position for pinning. Responds to changes in the set of pinned columns,
     but also responds to changes in the focused cell and in the active state in order to reset
