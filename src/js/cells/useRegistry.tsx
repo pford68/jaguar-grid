@@ -2,7 +2,7 @@ import {Adapter} from "../../types/types";
 import {ReactElement} from "react";
 import StringRenderer from "../renderers/StringRenderer";
 import NumericRenderer from "../renderers/NumericRenderer";
-import DateRenderer, {DateTimeRenderer} from "../renderers/DateRenderer";
+import DateRenderer from "../renderers/DateRenderer";
 import BooleanRenderer from "../renderers/BooleanRenderer";
 
 export default function useRegistry(): (value: unknown, type: string | undefined) => Adapter<any, ReactElement> {
@@ -11,7 +11,6 @@ export default function useRegistry(): (value: unknown, type: string | undefined
             "string": StringRenderer,
             "number": NumericRenderer,
             "date": DateRenderer,
-            "datetime": DateTimeRenderer,
             "boolean": BooleanRenderer,
             /*
             object: StructRenderer,
@@ -29,5 +28,15 @@ export default function useRegistry(): (value: unknown, type: string | undefined
             }
         }
         return registry[_type] ?? StringRenderer;
+    };
+}
+
+
+export function useParserRegistry(): (value: string, type: string) => unknown {
+    return (value: string, type: string): unknown => {
+        const registry: { [key: string]: Adapter<string, unknown> } = {
+            "date": (value: string) => Date.parse(value),
+        }
+        return registry[type]?.(value) ?? value;
     };
 }

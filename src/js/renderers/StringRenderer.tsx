@@ -3,6 +3,8 @@ import {InputContainer as StatefulInput} from "./StatefulInput";
 import {BaseRendererProps} from "./types";
 import {COMMON_DEFAULT_PROPS} from "../constants";
 import Text from "./Text";
+import {joinCss} from "../util/utils";
+import styles from "./Renderers.css";
 
 
 export type StringProps = BaseRendererProps<number> & {
@@ -18,16 +20,19 @@ export default function StringRenderer(props: StringProps): React.ReactElement {
         className,
         validator,
     } = props;
+
+    const baseClassName = joinCss(styles.renderer, styles.text, className);
+
     const nextProps = {
         ...props,
         name,
         value: String(value),
         placeholder: String(props.placeholder),
-        className: props.className,
+        className: joinCss(baseClassName, styles.active),
     }
 
     if (!active) {
-        return <Text value={value} className={className} validator={validator} />;
+        return <Text value={value} className={baseClassName} validator={validator} />;
     }
 
     return <StatefulInput {...nextProps} ref={rendererRef} type="text"/>;

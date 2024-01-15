@@ -37,6 +37,7 @@ export type ColumnConfigurableProps<T extends Struct> = {
     /**
      * Whether the value can be edited.
      * @default false
+     * @deprecated
      */
     editable: boolean,
     disabled?: boolean,
@@ -106,6 +107,7 @@ export default function CellFactory<T extends Struct>(props: CellFactoryProps<T>
         validator,
         required,
         wrap,
+        width,
     } = props;
     const gridContext = useContext(GridContext);
     const {
@@ -138,7 +140,7 @@ export default function CellFactory<T extends Struct>(props: CellFactoryProps<T>
 
     //==================================================== Effects
     useEffect(() => {
-        if (ref.current != null) {
+        if (width == null && ref.current != null) {
             const parent = ref.current.parentElement;
             const contextWidth = columnWidths.get(name);
             if (parent != null && pageContext.page === 0) {
@@ -147,8 +149,6 @@ export default function CellFactory<T extends Struct>(props: CellFactoryProps<T>
                 if (contextWidth == null || width > contextWidth) {
                     columnWidths.set(name, width);
                 }
-            } else if (parent != null) {
-                parent.style.width = contextWidth ? `${contextWidth}px` : "auto";
             }
         }
         return () => {
@@ -254,6 +254,7 @@ export default function CellFactory<T extends Struct>(props: CellFactoryProps<T>
         gridContext.pinned.has(name) ? styles.stickyColumn : "",
         gridContext.pinned.size - 1 === colIndex ? styles.divider : "",
         wrap === false ? styles.nowrap : "",
+        type != null && styles[type] ? styles[type] : "",
         className,
     );
     const rendererClass = joinCss(
@@ -340,4 +341,5 @@ CellFactory.defaultProps = {
     type: "string",
     wrap: false,
 }
+
 

@@ -5,3 +5,5 @@ export const COMMON_DEFAULT_PROPS = {
 
 export const SORT_DIRECTION_ASC = "asc";
 export const SORT_DIRECTION_DESC = "desc";
+
+export const MIN_COLUMN_WIDTH = 31;

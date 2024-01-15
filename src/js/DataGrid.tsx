@@ -1,5 +1,5 @@
-import React, {ReactElement, KeyboardEvent, useReducer, useRef} from "react";
-import Virtualizer from "./Virtualizer";
+import React, {ReactElement, KeyboardEvent, useReducer, useRef, useCallback} from "react";
+import PageFactory from "./PageFactory";
 import ObservableList, {Record} from "./ObservableList";
 import type {Struct} from "../types/types";
 import styles from "./DataGrid.css";
@@ -9,10 +9,10 @@ import FocusModel from "./FocusModel";
 import SelectionModel from "./SelectionModel";
 import {SORT_DIRECTION_ASC} from "./constants";
 import ColumnStyle from "./layout/ColumnStyle";
-import RowFactory from "./RowFactory";
 import {CommandStack} from "./util/CommandStack";
-import {LayoutManager} from "./layout/LayoutManager";
 import {useStorageClipboard} from "./clipboard/useStorageClipboard";
+import TableColumn from "./TableColumn";
+import TableFooter from "./TableFooter";
 
 
 export type DataGridProps = {
@@ -42,7 +42,6 @@ export type DataGridProps = {
 export type GridState = {
     sortColumns: string[],
     sortDirection: string,
-    resizedBy: number,
     focusModel: FocusModel,
     undoStack: CommandStack,
     redoStack: CommandStack,
@@ -90,26 +89,51 @@ export default function DataGrid(props: DataGridProps): ReactElement {
         columnSizing,
         rowHeight,
         pageSize,
+        children,
     } = props;
 
+    let containerWidth: number = 0, containerHeight: number = 0;
     const gridRef = useRef<HTMLDivElement>(null);
 
     //================================== Get visible columns once per render.
-    const layoutManager = new LayoutManager(props);
-    let columns = layoutManager.visibleColumns;
-    columns = columns.map((col, index) => React.cloneElement(col, {
-        key: `header-${index}`,
-    }));
+    const getChildArray = useCallback(
+        () => {
+            return Array.isArray(children) ? children : [children]
+        },
+        [children],
+    );
+
+    const getVisibleColumns = useCallback(
+        () => {
+            return getChildArray()
+                .filter(child => child.type === TableColumn);
+        },
+        [children],
+    );
+
+    const getFooter = useCallback(
+        () => {
+                return getChildArray().find(child => child.type === TableFooter);
+        },
+        [children],
+    );
+
+
+
+    const visibleColumns = getVisibleColumns();
+    const getMaxColumnWidth = useCallback(
+        () => ((containerWidth ?? 0) / visibleColumns.length),
+        [containerHeight, containerWidth, visibleColumns]
+    );
 
     //=================================== State
-    const colNames = columns.map(col => col.props.name);
+    const colNames = visibleColumns.map(col => col.props.name);
     const rowCount = data.length;
     const selectionModel = new SelectionModel(data)
-    const initSortColumn = props.sortColumn ?? columns[0].props.name;
+    const initSortColumn = props.sortColumn ?? visibleColumns[0].props.name;
     const initialGridState: GridState = {
         sortColumns: [initSortColumn],
         sortDirection: SORT_DIRECTION_ASC,
-        resizedBy: 0,
         undoStack: new CommandStack(),
         redoStack: new CommandStack(),
         focusModel: new FocusModel(rowCount, colNames.length),
@@ -148,7 +172,7 @@ export default function DataGrid(props: DataGridProps): ReactElement {
 
     //====================================== Rendering
     const wrappedComparator = (a: Record<Struct>, b: Record<Struct>): number => {
-        const sortColumn = columns
+        const sortColumn = visibleColumns
             .find(col => col.props.name === state.sortColumns[0]);
         const {comparator, name} = sortColumn?.props ?? {};
         return state.sortDirection === SORT_DIRECTION_ASC
@@ -162,7 +186,7 @@ export default function DataGrid(props: DataGridProps): ReactElement {
     }
 
     // Sorting columns based stickiness during render
-    columns.sort((a, b) => {
+    visibleColumns.sort((a, b) => {
         const {pinned} = state;
         const aName = a.props.name;
         const bName = b.props.name;
@@ -170,25 +194,28 @@ export default function DataGrid(props: DataGridProps): ReactElement {
             (!pinned.has(aName) && pinned.has(bName) ? 1 : 0);
     });
 
-    const columnWidths = new Map(columns.map(col => [col.props.name, col.props.width]))
+    const columnWidths = useRef(new Map(visibleColumns.map(col => [col.props.name, col.props.width])))
     const finalColumnSizing = columnSizing && !state.fitContainer ? columnSizing : "equal";
 
     return (
         <GridContext.Provider value={{
             ...state,
+            gridRef,
             gridDispatch,
             items: data,
+            columns: visibleColumns,
             columnNames: colNames,
-            columnWidths,
+            columnWidths: columnWidths.current,
             selectionModel,
             stickyHeaders,
             nullable,
             columnSizing,
+            alternateRows,
         }}>
             <ColumnStyle
                 type={finalColumnSizing == "auto" || finalColumnSizing == "equal" ? finalColumnSizing : "auto"}
-                columns={columns}
-                maxWidth={layoutManager.maxColumnWidth}
+                columns={visibleColumns}
+                maxWidth={getMaxColumnWidth()}
             />
             <div
                 ref={gridRef}
@@ -204,18 +231,17 @@ export default function DataGrid(props: DataGridProps): ReactElement {
                     styles.row,
                     stickyHeaders ? styles.stickyHeaders : ""
                 )}>
-                    {columns}
+                    {visibleColumns}
                 </div>
-                <Virtualizer
+                <PageFactory
                     data={data.getAll()}
                     root={gridRef.current?.parentElement}
                     offset={pageSize * rowHeight}
                     pageSize={8}
                     rowHeight={rowHeight}
-                    renderer={rows => renderRows(rows, columns, alternateRows)}
                 />
             </div>
-            {layoutManager.getFooter() ?? ""}
+            {getFooter() ?? ""}
         </GridContext.Provider>
     )
 }
@@ -230,19 +256,6 @@ DataGrid.defaultProps = {
 
 
 // ==================================== Private
-function renderRows(rows: Record<Struct>[], columns: ReactElement[], alternate: boolean): ReactElement[] {
-
-    return rows.map((row, index) => (
-        <RowFactory
-            key={index}
-            rowIndex={index}
-            row={row}
-            columns={columns}
-            alternateRows={alternate}
-        />
-    ));
-}
-
 
 function reducer(state: GridState, action: GridAction): GridState {
     const {type, payload} = action;

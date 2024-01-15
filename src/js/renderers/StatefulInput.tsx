@@ -15,7 +15,7 @@ import styles from "./Renderers.css";
 
 type StatefulInputProps = {
     name: string,
-    type: "text" | "date" | "checkbox" | "radio" | "number" | "multiline";
+    type: "text" | "date" | "checkbox" | "radio" | "number" | "multiline" | "email" | "tel" | "range" | "url";
     value: string,
     onChange?: Consumer<string>,
     onFocus?: Consumer<FocusEvent>,
@@ -102,7 +102,7 @@ export default function StatefulInput(props: StatefulInputProps, ref?: Ref<HTMLI
                     }
                 }
             }}
-            className={joinCss(!valid ? styles.invalid : "", className)}
+            className={joinCss(styles.input, !valid ? styles.invalid : "", className)}
         />
     );
 }

@@ -56,3 +56,6 @@ export function isTextSelected(): boolean {
     return selection != null && selection.type?.toLowerCase() === "range";
 }
 
+export function toISODateString(timestamp: number): string {
+    return new Date(timestamp).toISOString().split("T")[0];
+}
