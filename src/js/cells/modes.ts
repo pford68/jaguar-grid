@@ -26,13 +26,13 @@ export class FocusMode implements CellState {
         const {key} = e;
         const ctrlKey = e.ctrlKey || e.metaKey;
         const {
-            focusModel,
-            selectionModel,
             items,
             columnNames,
             gridDispatch,
             undoStack,
         } = this.#context;
+        const selectionModel = this.#context.selectionModel?.current;
+        const focusModel = this.#context.focusModel?.current;
         const focusedCell = focusModel?.focused;
         if (focusedCell == null || focusModel ==  null || selectionModel == null || items == null) return;
 

@@ -95,7 +95,8 @@ function Page<T extends Struct>(props: PageProps<T>): ReactElement {
         emitter,
     } = props;
     const gridContext = useContext(GridContext);
-    const {selectionModel, focusModel} = gridContext
+    const selectionModel = gridContext.selectionModel?.current;
+    const focusModel = gridContext.focusModel?.current;
     const [visible, setVisible] = useState(false);
     const height = rowHeight * rows.length;
     const ref =  useRef<HTMLDivElement>(null);
@@ -119,10 +120,7 @@ function Page<T extends Struct>(props: PageProps<T>): ReactElement {
         return () => {
             focusModel?.off("focusChanged", onFocusChanged);
         }
-    }, [
-        focusModel,
-        selectionModel,
-    ]);
+    }, [visible]);
 
 
     useEffect(() => {
