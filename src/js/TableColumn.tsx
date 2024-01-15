@@ -136,6 +136,7 @@ export default function TableColumn<T extends Struct>(props: TableColumnProps<T>
 
 
     const onSortClicked = () => {
+        focusModel?.clear();
         if (gridDispatch == null) return;
         if (sortColumns?.[0] !== name) {
             gridDispatch({type: "sort", payload: {name}});
