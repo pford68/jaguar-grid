@@ -1,11 +1,12 @@
-import React, {ReactElement, useContext, useEffect} from "react";
+import React, {ReactElement, useContext} from "react";
 import styles from "../DataGrid.css";
-import {GridContext, GridContextType} from "../GridContext";
+import {GridContext} from "../GridContext";
 
 type ColumnStyleProps = {
     type: "auto" | "equal",
     columns: ReactElement[],
     maxWidth?: number,
+    minWidth?: number,
 }
 
 /**
@@ -14,36 +15,23 @@ type ColumnStyleProps = {
  * @constructor
  */
 export default function ColumnStyle(props: ColumnStyleProps) {
-    const {type, columns, maxWidth} = props;
     const gridContext = useContext(GridContext);
-
-    useEffect(() => {
-        console.log("width", gridContext.columnWidths)
-        renderAutoStyle(columns, gridContext, maxWidth);
-    }, [gridContext.columnWidths]);
-
-
-    switch(type) {
-        case "equal":
-            return rendererEqualStyle(columns.length);
-        default:
-            return renderAutoStyle(columns, gridContext, maxWidth);
-    }
-}
-ColumnStyle.defaultProps = {
-    type: "auto",
-}
-
-function renderAutoStyle(columns: ReactElement[], ctx: GridContextType, maxWidth?: number): ReactElement {
+    const {
+        type,
+        columns,
+        maxWidth,
+        minWidth
+    } = props;
     const widths = columns.map(col => {
-        const {name, width: propWidth} = col.props;
-        const width = propWidth ?? ctx.columnWidths.get(name);
-        return width != null ? `${width}px` : "auto";
-    })
+        const {width, name} = col.props;
+        const assignedWidth = gridContext.columnWidths.get(name) ?? width;
+        return assignedWidth != null  ? `${assignedWidth}px` : (type === "equal" ? "1fr" : "auto");
+    });
+
     return (
         <style>
             {
-              `.${styles.grid} {
+                `.${styles.grid} {
                  grid-template-columns: ${widths.join(" ")};
               }`
             }
@@ -52,25 +40,12 @@ function renderAutoStyle(columns: ReactElement[], ctx: GridContextType, maxWidth
                  grid-column: span ${columns.length};
               }`
             }
-            {maxWidth != null ? `.cell {max-width: ${maxWidth}px}` : ""}
-        </style>
-    );
-}
-
-function rendererEqualStyle(columnCount: number, maxWidth?: number): ReactElement {
-    return (
-        <style>
-            {
-               `.${styles.grid} {
-                  grid-template-columns: repeat(${columnCount}, 1fr);
-               }`
-            }
-            {
-                `.${styles.row}, .${styles.page} {
-                 grid-column: span ${columnCount};
-              }`
-            }
-            {maxWidth != null ? `.cell {max-width: ${maxWidth}px}` : ""}
+            {maxWidth != null ? `.cell {max-width: ${maxWidth}px; }` : ""}
+            {`.header, .cell {min-width: ${minWidth}px; }`}
         </style>
     )
+}
+ColumnStyle.defaultProps = {
+    type: "auto",
+    minWidth: 32,
 }

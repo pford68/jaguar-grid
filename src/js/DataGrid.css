@@ -57,10 +57,12 @@
     grid-template-rows: repeat(3, 33%);
     align-items: center;
     border: 1px solid silver;
+    min-width: 30px;
+    box-sizing: border-box;
 }
 
 .header.resizable {
-    grid-template-columns: 8px minmax(50px, auto) 12px 5px;
+    grid-template-columns: 8px minmax(5px, auto) 12px 5px;
 }
 
 .header .title {
@@ -198,12 +200,24 @@
 }
 
 .columnResizer {
-    grid-area: right;
-    width: 2px;
+    grid-area: gutter;
+    width: 5px;
     height: 100%;
     cursor: col-resize;
+}
+.columnResizer.tooSmall {
+    cursor: e-resize;
+}
+.columnResizer.tooLarge {
+    cursor: w-resize;
 }
 
 .divider {
     border-right: 3px solid silver;
+}
+
+/* ---------------------------------- Data Types ---------- */
+.cell.number > [tabindex="-1"],
+.header.number .title {
+    justify-content: end;
 }
