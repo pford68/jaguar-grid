@@ -92,7 +92,7 @@ export default function DataGrid(props: DataGridProps): ReactElement {
         children,
     } = props;
 
-    let containerWidth: number = 0, containerHeight: number = 0;
+    const containerWidth: number = 0, containerHeight: number = 0;
     const gridRef = useRef<HTMLDivElement>(null);
 
     //================================== Get visible columns once per render.

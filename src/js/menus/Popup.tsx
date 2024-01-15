@@ -1,4 +1,4 @@
-import React, {ReactElement, ReactNode} from "react";
+import React, {ReactElement} from "react";
 import {createPortal} from "react-dom";
 import styles from "./menus.css";
 

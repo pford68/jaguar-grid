@@ -104,7 +104,6 @@ export default function TableColumn<T extends Struct>(props: TableColumnProps<T>
         stickyHeaders,
         sortColumns,
         focusModel,
-        gridRef,
     } = gridContext;
     const active = sortColumns?.[0] === name;
     let sortDirection = gridContext.sortDirection;
@@ -191,7 +190,6 @@ export default function TableColumn<T extends Struct>(props: TableColumnProps<T>
             <Pin parentRef={ref} name={name} active={pin.pushed} updater={setPin}/>
             {resizable ? (
                 <ColumnResizer
-                    targetRef={ref}
                     onResize={handleResize}
                     className={(ref.current?.offsetWidth ?? Number.POSITIVE_INFINITY) <= MIN_COLUMN_WIDTH
                         ? styles.tooSmall

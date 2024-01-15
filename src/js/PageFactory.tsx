@@ -6,7 +6,6 @@ import {Emitter, Observable} from "./Observable";
 import {PageContext} from "./PageContext";
 import RowFactory from "./RowFactory";
 import {GridContext} from "./GridContext";
-import {SelectionChange} from "./SelectionModel";
 
 type IntersectionResult = {
     visiblePages: Set<number>,
