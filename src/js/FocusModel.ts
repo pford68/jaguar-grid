@@ -8,8 +8,8 @@ import {Coordinates} from "../types/types";
  */
 export default class FocusModel extends Emitter<Coordinates> {
     #focused: Coordinates | null;
-    readonly #maxRowIndex: number;
-    readonly #maxColIndex: number;
+    #maxRowIndex: number;
+    #maxColIndex: number;
 
     constructor(rowCount: number, columnCount: number) {
         super();
@@ -20,6 +20,22 @@ export default class FocusModel extends Emitter<Coordinates> {
 
     get focused(): Coordinates | null {
         return this.#focused;
+    }
+
+    get rowCount(): number {
+        return this.#maxRowIndex + 1;
+    }
+
+    set rowCount(value: number) {
+        this.#maxRowIndex = value - 1;
+    }
+
+    get columnCount(): number {
+        return this.#maxColIndex + 1;
+    }
+
+    set columnCount(value: number) {
+        this.#maxColIndex = value - 1;
     }
 
     /**
