@@ -114,7 +114,6 @@ export default function CellFactory<T extends Struct>(props: CellFactoryProps<T>
         selectionModel,
         focusModel,
         nullable,
-        items,
         columnWidths,
         columnSizing,
         pinned,

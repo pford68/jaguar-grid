@@ -1,54 +1,47 @@
-import React, {ReactElement, DragEvent, RefObject, useEffect, useRef} from "react";
+import React, {ReactElement, DragEvent, useRef} from "react";
 import styles from "../DataGrid.css";
-import {Consumer} from "../../types/types";
 import {joinCss} from "../util/utils";
 
-type Resizable = {
-   width?: number,
-   start: number,
-   onResize: Consumer<number>,
-};
-
 type ColumnResizerProps = {
-   targetRef: RefObject<HTMLElement>,
    onResize: (delta: number) => void,
    className?: string,
 };
 
 export default function ColumnResizer(props: ColumnResizerProps): ReactElement {
-   const {targetRef, onResize, className} = props;
+   const { onResize, className} = props;
+   const start = useRef<number>(0);
+   const end = useRef<number>(0);
 
-   const targetData = useRef<Resizable>({
-      onResize,
-      start: 0,
-   });
+  const onDragStart = (e: DragEvent): void => {
+      e.dataTransfer.effectAllowed = "move";
+      start.current = e.clientX;
+   }
 
-   useEffect(() => {
-      if (targetRef.current != null && targetData.current != null) {
-         targetData.current.width = targetRef.current.getBoundingClientRect().width;
-      }
-   }, [
-      targetRef.current,
-      targetRef.current?.offsetWidth,
-   ]);
+   const onDragEnd = (): void => {
+      /*
+       Safari reports an incorrect clientX from onDragEnd.
+       Using the clientX captured in onDrag
+       */
+      const delta = end.current - start.current; // Safari reports an incorrect clientX from onDragEnd.
+      onResize(delta);
+   }
 
+   const onDrag = (e: DragEvent): void => {
+       /*
+          Safari reports an incorrect clientX from onDragEnd.
+          Using the clientX captured in onDrag
+        */
+      end.current = e.clientX;
+   }
 
    return (
        <div
            className={joinCss(styles.columnResizer, className)}
-           onDragStart={(e) => onDragStart(targetData.current, e)}
-           onDragEnd={(e) => onDragEnd(targetData.current, e)}
+           onDragStart={onDragStart}
+           onDrag={onDrag}
+           onDragEnd={onDragEnd}
            draggable={true}
        />
    );
 }
 
-function onDragStart(targetData: Resizable, e: DragEvent): void {
-   e.dataTransfer.effectAllowed = "move";
-   targetData.start = e.clientX;
-}
-
-function onDragEnd(targetData: Resizable, e: DragEvent): void {
-   const delta = e.clientX - targetData.start;
-   targetData.onResize(delta);
-}
