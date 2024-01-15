@@ -1,4 +1,4 @@
-import React, {ReactElement, useContext, useEffect, useRef, useState} from "react";
+import React, {ReactElement, useContext, useEffect, useRef, useState, DragEvent} from "react";
 import {BiFunction, Struct} from "../types/types";
 import styles from "./DataGrid.css";
 import {GridContext} from "./GridContext";
@@ -91,6 +91,7 @@ export default function TableColumn<T extends Struct>(props: TableColumnProps<T>
         title,
         sticky,
         onResize,
+        width,
     } = props;
 
     const ref = useRef<HTMLDivElement>(null);
@@ -108,12 +109,6 @@ export default function TableColumn<T extends Struct>(props: TableColumnProps<T>
     } = gridContext;
     const active = sortColumns?.[0] === name;
     let sortDirection = gridContext.sortDirection;
-
-    useEffect(() => {
-        if (ref.current != null){
-            ref.current.style.width = `${gridContext.columnWidths.get(name)}px`
-        }
-    }, [gridContext.columnWidths]);
 
     useEffect(() => {
         if (pin.pushed) {
@@ -159,16 +154,12 @@ export default function TableColumn<T extends Struct>(props: TableColumnProps<T>
     const colIndex = gridContext.columnNames
         .findIndex(col => col === name);
 
-    const handleResize = (width: number) => {
+    const handleResize = (delta: number) => {
         if (ref.current != null) {
-            let {width: prevWidth} = ref.current.getBoundingClientRect();
-            prevWidth = gridContext.columnWidths.get(name) ?? prevWidth;
-            gridContext.columnWidths.set(name, width);
-            ref.current.style.width = `${width}px`;
-            if (gridRef?.current != null && width < prevWidth) {
-                const {width:gridWidth} = gridRef.current.getBoundingClientRect();
-                //gridRef.current.style.width = `${gridWidth + (width - prevWidth)}px`;
-            }
+            const width = ref.current.offsetWidth;
+            const newWidth = width + delta;
+            ref.current.style.width = `${newWidth}px`;
+            gridContext.columnWidths.set(name, newWidth);
             gridDispatch?.({type: "update"});
         }
     }
@@ -186,6 +177,8 @@ export default function TableColumn<T extends Struct>(props: TableColumnProps<T>
                 gridContext.pinned.size - 1 === colIndex ? styles.divider : "",
             )}
             data-col-index={colIndex}
+            onDragOver={onDragOver}
+            //style={{width: typeof finalWidth == "number" ? `${finalWidth}px` : finalWidth}}
         >
             <div
                 className={styles.title}
@@ -228,5 +221,9 @@ function defaultComparator(a: unknown, b: unknown) {
        return a -b;
    }
    return String(a).localeCompare(String(b));
+}
+
+function onDragOver(e: DragEvent): void {
+    e.preventDefault();
 }
 

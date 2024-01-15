@@ -6,7 +6,7 @@ import React, {
     useContext,
     useEffect,
     useRef,
-    useState, RefObject,
+    useState,
 } from "react";
 import {Consumer, Coordinates, Predicate, Struct} from "../../types/types";
 import {GridContext} from "../GridContext";
@@ -106,6 +106,7 @@ export default function CellFactory<T extends Struct>(props: CellFactoryProps<T>
         validator,
         required,
         wrap,
+        width,
     } = props;
     const gridContext = useContext(GridContext);
     const {
@@ -138,7 +139,7 @@ export default function CellFactory<T extends Struct>(props: CellFactoryProps<T>
 
     //==================================================== Effects
     useEffect(() => {
-        if (ref.current != null) {
+        if (width == null && ref.current != null) {
             const parent = ref.current.parentElement;
             const contextWidth = columnWidths.get(name);
             if (parent != null && pageContext.page === 0) {
@@ -147,8 +148,6 @@ export default function CellFactory<T extends Struct>(props: CellFactoryProps<T>
                 if (contextWidth == null || width > contextWidth) {
                     columnWidths.set(name, width);
                 }
-            } else if (parent != null) {
-                parent.style.width = contextWidth ? `${contextWidth}px` : "auto";
             }
         }
         return () => {

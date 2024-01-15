@@ -12,7 +12,6 @@ export type GridContextType = {
     columnNames: string[],
     sortColumns: string[],
     sortDirection: string,
-    resizedBy: number,
     gridDispatch?: Dispatch<GridAction>,
     focusModel?: FocusModel,
     selectionModel?: SelectionModel,
@@ -29,7 +28,6 @@ export type GridContextType = {
     alternateRows: boolean,
 }
 export const initialGridContext: GridContextType = {
-    resizedBy: 0,
     columns: [],
     sortColumns: [],
     sortDirection: "",

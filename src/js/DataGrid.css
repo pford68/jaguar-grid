@@ -57,11 +57,12 @@
     grid-template-rows: repeat(3, 33%);
     align-items: center;
     border: 1px solid silver;
-    min-width: min-content;
+    min-width: 30px;
+    box-sizing: border-box;
 }
 
 .header.resizable {
-    grid-template-columns: 8px minmax(50px, auto) 12px 5px;
+    grid-template-columns: 8px minmax(5px, auto) 12px 5px;
 }
 
 .header .title {

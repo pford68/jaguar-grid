@@ -25,7 +25,10 @@ export default function ColumnResizer(props: ColumnResizerProps): ReactElement {
       if (targetRef.current != null && targetData.current != null) {
          targetData.current.width = targetRef.current.getBoundingClientRect().width;
       }
-   }, [targetRef.current]);
+   }, [
+      targetRef.current,
+      targetRef.current?.offsetWidth,
+   ]);
 
 
    return (
@@ -39,11 +42,11 @@ export default function ColumnResizer(props: ColumnResizerProps): ReactElement {
 }
 
 function onDragStart(targetData: Resizable, e: DragEvent): void {
+   e.dataTransfer.effectAllowed = "move";
    targetData.start = e.clientX;
 }
 
 function onDragEnd(targetData: Resizable, e: DragEvent): void {
-   if (targetData.width == null) return;
-   const newWidth = targetData.width + (e.clientX - targetData.start);
-   targetData.onResize(newWidth);
+   const delta = e.clientX - targetData.start;
+   targetData.onResize(delta);
 }
