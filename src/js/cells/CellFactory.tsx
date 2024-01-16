@@ -196,6 +196,12 @@ export default function CellFactory<T extends Struct>(props: CellFactoryProps<T>
     }, []);
 
 
+    useEffect(() => {
+        const result = selectionModel?.isContained(rowIndex, colIndex) ?? false;
+        setSelected(result);
+    }, [pageContext.page])
+
+
     /*
     Resets the focus on the current cell after transitions between active and inactive states.
      */

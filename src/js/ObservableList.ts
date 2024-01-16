@@ -129,19 +129,39 @@ export default class ObservableList<T extends Struct> extends Emitter<ListChange
         return this.filter(record => !record.deleted);
     }
 
-    updateAt(index: number, record: Record<T>): boolean {
+    /**
+     * Inserts/replaces the specified Record at the specified index.  The Record can be
+     * an updated version of the original.  Use this when you have an Record and want to
+     * re-insert it to notify listeners that the list has been updated.
+     *
+     * @param index The index at which to insert the Record.
+     * @param record The Record to insert
+     */
+    insertAt(index: number, record: Record<T>): boolean {
         this.#data[index] = record;
         this.emit("dataChanged", [{type: "modified", index, record}]);
         return true;
     }
 
-    updateRecordAt(index: number, data: T): boolean {
+    /**
+     * Updates the record at the specified index.  Use this when you have
+     * data to mix in, but don't have the Record itself.
+     *
+     * @param index
+     * @param data
+     */
+    updateAt(index: number, data: T): boolean {
         const record = this.#data[index];
         record.update(data)
         this.emit("dataChanged", [{type: "modified", index, record}]);
         return true;
     }
 
+    /**
+     * Update multiple records at once.
+     *
+     * @param updates An array of ListItemUpdates
+     */
     batchUpdate(updates: ListItemUpdate<T>[]): void {
         const results = updates
             .map(({index, record}) => {

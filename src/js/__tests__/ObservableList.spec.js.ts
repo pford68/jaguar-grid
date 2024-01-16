@@ -164,12 +164,12 @@ describe("ObservableList", () => {
         });
     })
 
-    describe("updateAt", () => {
+    describe("insertAt", () => {
         it("should take an updated record and insert it at the specified index", () => {
             const record = list.get(2);
             if (record != null) {
                 record.set("firstName", "Jack");
-                list.updateAt(2, record);
+                list.insertAt(2, record);
                 expect(record.get("firstName")).toBe("Jack");
             } else {
                 fail("The record should have been found.")

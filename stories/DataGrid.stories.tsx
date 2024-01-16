@@ -14,6 +14,7 @@ import Container from "../src/js/layout/Container";
 
 type PropsAndArgs = React.ComponentProps<typeof DataGrid> & {
     width: number,
+    height: number,
     showRowCount?: boolean,
 };
 

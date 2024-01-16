@@ -105,6 +105,7 @@ export default function TableColumn<T extends Struct>(props: TableColumnProps<T>
         sortColumns,
     } = gridContext;
     const focusModel = gridContext.focusModel?.current;
+    const selectionModel = gridContext.selectionModel?.current;
     const active = sortColumns?.[0] === name;
     let sortDirection = gridContext.sortDirection;
 
@@ -137,6 +138,7 @@ export default function TableColumn<T extends Struct>(props: TableColumnProps<T>
 
     const onSortClicked = () => {
         focusModel?.clear();
+        selectionModel?.clearSelections();
         if (gridDispatch == null) return;
         if (sortColumns?.[0] !== name) {
             gridDispatch({type: "sort", payload: {name}});
