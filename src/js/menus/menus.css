@@ -1,5 +1,45 @@
 .popup {
-    position: relative;
+    display: inline-block;
+    position: absolute;
+    padding: var(--popup-padding, 8px);
+    background-color: #f1f0f0;
+    filter: grayscale(50%);
+}
+
+.layer {
+    width: 100vh;
+    height: 100vh;
+    background-color: transparent;
+    position: absolute;
+    top: 0;
+    left: 0;
     z-index: 1000;
+}
+
+.menu {
+    display: inline-flex;
+    flex-direction: column;
+}
+
+.menuItem {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 8px;
+}
+.menuItem .left {
+    display: grid;
+    grid-template-columns: 30% 70%;
+    column-gap: 5px;
+    width: 50px; /* Yes, for alignment, and we allow overflow */
+    white-space: nowrap;
+}
+.menuItem:hover {
+    background-color: #1ea7fd;
+    border-radius: 5px;
+}
+.menuItem .icon {
+}
+.menuItem .shortCut {
+    opacity: 0.5;
 }
 

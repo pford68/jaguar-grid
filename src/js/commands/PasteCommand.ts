@@ -2,6 +2,7 @@ import {Command, Struct} from "../../types/types";
 import CopyCommand from "./CopyCommand";
 import ObservableList, {Record} from "../ObservableList";
 import BaseCommand from "./BaseCommand";
+import {IconProp} from "@fortawesome/fontawesome-svg-core";
 
 type PasteParameter = {
     rowIndex: number,
@@ -14,9 +15,9 @@ export default class PasteCommand<T extends Struct>
     extends BaseCommand<PasteParameter>
     implements Command<PasteParameter>
 {
-    readonly icon: string = "paste";
+    readonly icon: IconProp = "paste";
     readonly name: string = "Paste";
-    readonly shortCut: string = "&#8984+v";
+    readonly shortCut: string = "⌘+v";
     readonly #previous: {id: string, clone: Record<T>}[];
     #items: ObservableList<T>;
 

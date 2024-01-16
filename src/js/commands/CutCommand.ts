@@ -1,12 +1,13 @@
 import CopyCommand from "./CopyCommand";
 import {Struct} from "../../types/types";
 import {Record} from "../ObservableList";
+import {IconProp} from "@fortawesome/fontawesome-svg-core";
 
 export default class CutCommand<T extends Struct> extends CopyCommand<T> {
 
-    icon: string = "cut";
+    icon: IconProp = "cut";
     name: string = "Cut";
-    readonly shortCut: string = "&#8984+x";
+    readonly shortCut: string = "⌘+x";
     readonly #previous: {id: string, clone: Record<T>}[];
 
     constructor(selectedItems: Record<T>[]) {

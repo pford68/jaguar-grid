@@ -3,6 +3,8 @@ import type { Preview } from "@storybook/react";
 import {library} from "@fortawesome/fontawesome-svg-core";
 import {fas} from "@fortawesome/free-solid-svg-icons";
 import {far} from "@fortawesome/free-regular-svg-icons";
+// @ts-ignore
+import styles from "./preview.css";
 library.add(fas);
 library.add(far);
 
@@ -20,6 +22,7 @@ const preview: Preview = {
     backgroundColor: "inherit",
     width: 1200,
     height: 800,
+    theme: styles.main,
   },
   argTypes: {
     backgroundColor: {
@@ -35,7 +38,7 @@ const preview: Preview = {
   decorators: [
     (Story, {args}) => {
       return (
-          <div style={{width: `${args.width}px`, height: `${args.height}px`}}>
+          <div className={args.theme} style={{width: `${args.width}px`, height: `${args.height}px`}}>
             <Story />
           </div>
       );
