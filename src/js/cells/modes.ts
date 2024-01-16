@@ -72,8 +72,8 @@ export class FocusMode implements CellState {
             case "ArrowUp": {
                 e.preventDefault();
                 if (ctrlKey) {
+                    focusModel.focus(0, focusedCell.colIndex);
                     if (e.shiftKey) selectionModel.select(0, focusedCell.colIndex);
-                    else focusModel.focus(0, focusedCell.colIndex);
                     return;
                 }
 
@@ -87,8 +87,8 @@ export class FocusMode implements CellState {
             case "ArrowDown": {
                 e.preventDefault();
                 if (ctrlKey) {
+                    focusModel.focus(rowCount - 1, focusedCell.colIndex);
                     if (e.shiftKey) selectionModel.select(rowCount - 1, focusedCell.colIndex);
-                    else focusModel.focus(rowCount - 1, focusedCell.colIndex);
                     return;
                 }
 

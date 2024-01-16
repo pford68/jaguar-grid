@@ -16,17 +16,54 @@ import TableFooter from "./TableFooter";
 
 
 export type DataGridProps = {
+    /**
+     * The data to display in the grid.
+     */
     data: ObservableList<Struct>,
+    /**
+     * TableColumns and TableFooters are allowed.
+     */
     children: ReactElement | ReactElement[],
+    /**
+     * Whether to use alternate row colors.
+     * @default false
+     */
     alternateRows: boolean,
     stickyHeaders: boolean,
-    scrollable: boolean,
+    /**
+     * Whether a cell is allowed to display null or undefined.
+     * If false, a placholer appears instead.
+     *
+     * @default false
+     */
     nullable: boolean,
+    /**
+     * The height of a row (in pixels) in the grid.
+     * @type number
+     * @default 48
+     */
     rowHeight: number,
+    /**
+     * The number of rows in a page of data. It is used for virtualization.
+     * @default 15
+     */
     pageSize: number,
+    /**
+     * <p>Used for auto-sizing columns:  setting the widths of columns that don't have a
+     * <i>width</i> prop set.  The choices are: <br />
+     * <ul>
+     *     <li><i>auto</i>: width is determined by the longest value/header on the first page of data.
+     *     For columns where the headers are longer than their values, the headers wain.</li>
+     *     <li><i>equal</i>: the spaces is divided equally between columns (that don't have width props set).</li>
+     *     <li><i>max-content</i>: width is determined by the longest value in the first page of data..</li>
+     * </ul>
+     * </p>
+     */
     columnSizing: "auto" | "equal" | "max-content",
-    height?: number,
     className?: string,
+    /**
+     * The initial sort column.
+     */
     sortColumn?: string,
     /**
      * Registers new type renderers for the current instance.
@@ -82,7 +119,6 @@ export default function DataGrid(props: DataGridProps): ReactElement {
         data,
         className,
         stickyHeaders,
-        scrollable,
         nullable,
         alternateRows,
         columnSizing,
@@ -234,7 +270,6 @@ export default function DataGrid(props: DataGridProps): ReactElement {
                 ref={gridRef}
                 className={joinCss(
                     styles.grid,
-                    scrollable ? styles.scrollable : "",
                     finalColumnSizing === "max-content" ? styles.columnSizing : "",
                     className
                 )}
