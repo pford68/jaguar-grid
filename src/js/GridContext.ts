@@ -2,7 +2,7 @@ import {createContext, Dispatch, ReactElement, RefObject} from "react";
 import FocusModel from "./FocusModel";
 import SelectionModel from "./SelectionModel";
 import ObservableList from "./ObservableList";
-import {Struct} from "../types/types";
+import {Command, Struct} from "../types/types";
 import {GridAction} from "./DataGrid";
 import {CommandStack} from "./util/CommandStack";
 
@@ -12,6 +12,12 @@ export type GridContextType = {
     columnNames: string[],
     sortColumns: string[],
     sortDirection: string,
+    alternateRows: boolean,
+    pinned: Set<string>,
+    unpinned: Set<string>,
+    columnWidths: Map<string, number>,
+    columnSizing: "auto" | "equal" | "max-content",
+    offsets: Map<string, number>,
     gridDispatch?: Dispatch<GridAction>,
     focusModel?: RefObject<FocusModel>,
     selectionModel?: RefObject<SelectionModel>,
@@ -19,13 +25,8 @@ export type GridContextType = {
     nullable?: boolean,
     undoStack?: CommandStack,
     redoStack?: CommandStack,
-    pinned: Set<string>,
-    unpinned: Set<string>,
-    offsets: Map<string, number>,
-    columnWidths: Map<string, number>,
-    columnSizing: "auto" | "equal" | "max-content",
     gridRef?: RefObject<HTMLDivElement>,
-    alternateRows: boolean,
+    contextMenuItems?: Command<Struct>[],
 }
 export const initialGridContext: GridContextType = {
     columns: [],

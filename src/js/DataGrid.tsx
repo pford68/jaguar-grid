@@ -13,7 +13,6 @@ import {CommandStack} from "./util/CommandStack";
 import {useStorageClipboard} from "./clipboard/useStorageClipboard";
 import TableColumn from "./TableColumn";
 import TableFooter from "./TableFooter";
-import ContextMenu from "./menus/ContextMenu";
 
 
 export type DataGridProps = {
@@ -263,6 +262,7 @@ export default function DataGrid(props: DataGridProps): ReactElement {
             nullable,
             columnSizing,
             alternateRows,
+            contextMenuItems,
         }}>
             <ColumnStyle
                 type={finalColumnSizing == "auto" || finalColumnSizing == "equal" ? finalColumnSizing : "auto"}
@@ -293,11 +293,6 @@ export default function DataGrid(props: DataGridProps): ReactElement {
                 />
             </div>
             {getFooter() ?? ""}
-            {
-                contextMenuItems != null
-                ? <ContextMenu commands={contextMenuItems} targetRef={gridRef} />
-                : ""
-            }
         </GridContext.Provider>
     )
 }
