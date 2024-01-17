@@ -19,7 +19,7 @@
     "target": "es2021",
     "checkJs": false
   },
-  "include": ["src/**/*", "stories/**/*.tsx"],
+  "include": ["src/**/*", "stories/**/*.tsx", ".storybook/**/*.css"],
   "exclude": [
     "node_modules"
   ]

@@ -1,5 +1,5 @@
-import React, {ReactElement, useContext, useEffect, useRef, useState, DragEvent} from "react";
-import {BiFunction, Struct} from "../types/types";
+import React, {ReactElement, useContext, useEffect, useRef, useState, DragEvent, useCallback} from "react";
+import {BiFunction, Command, Struct} from "../types/types";
 import styles from "./DataGrid.css";
 import {GridContext} from "./GridContext";
 import {DataTypes} from "../types/types";
@@ -19,6 +19,8 @@ type TableColumnState = {
 /**
  * Extends ColumnConfigurableProps so that the CellFactory can be configured from the TableColumn.
  * @augments ColumnConfigurableProps
+ *
+ * @param T The data type of the data contained in the Record that supplies row data.
  */
 export type TableColumnProps<T extends Struct> = {
     /**
@@ -71,6 +73,7 @@ export type TableColumnProps<T extends Struct> = {
     onResize?: (colName: string, delta: number) => void,
     /** The HTML title attribute */
     title: boolean,
+    contextMenuItems?: Command<T>[],
 } & ColumnConfigurableProps<T>;
 
 
@@ -137,8 +140,6 @@ export default function TableColumn<T extends Struct>(props: TableColumnProps<T>
 
 
     const onSortClicked = () => {
-        focusModel?.clear();
-        selectionModel?.clearSelections();
         if (gridDispatch == null) return;
         if (sortColumns?.[0] !== name) {
             gridDispatch({type: "sort", payload: {name}});
@@ -167,10 +168,21 @@ export default function TableColumn<T extends Struct>(props: TableColumnProps<T>
         }
     }
 
+    const clear = useCallback(
+        () => {
+            focusModel?.clear();
+            selectionModel?.clearSelections();
+        },
+        [focusModel, selectionModel],
+    );
+
+
     return  (
         <div
             ref={ref}
-            onFocus={() => focusModel?.clear()}
+            onFocus={clear}
+            onMouseDown={clear}
+            onDragOver={onDragOver}
             className={joinCss(
                 styles.header,
                 !wrap ? styles.nowrap : "",
@@ -181,7 +193,6 @@ export default function TableColumn<T extends Struct>(props: TableColumnProps<T>
                 type != null && styles[type] ? styles[type] : "",
             )}
             data-col-index={colIndex}
-            onDragOver={onDragOver}
         >
             <div
                 className={styles.title}
@@ -190,7 +201,12 @@ export default function TableColumn<T extends Struct>(props: TableColumnProps<T>
                 <span title={title ? text : undefined}>{text}</span>
                 {sortable ? <SortButton active={active} sortDirection={sortDirection} /> : ""}
             </div>
-            <Pin parentRef={ref} name={name} active={pin.pushed} updater={setPin}/>
+            <Pin
+                parentRef={ref}
+                name={name}
+                active={pin.pushed}
+                updater={setPin}
+            />
             {resizable ? (
                 <ColumnResizer
                     onResize={handleResize}

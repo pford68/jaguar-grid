@@ -23,7 +23,11 @@ import useCellFactoryReducer from "./useCellFactoryReducer";
 import usePreviousState from "./usePreviousState";
 import {PageContext} from "../PageContext";
 
-
+/**
+ * Cell renderer props that can be configured from a TableColumn.
+ *
+ * @param T The data type of the data contained in the Record that supplies row data.
+ */
 export type ColumnConfigurableProps<T extends Struct> = {
     /**
      * The column of data to render in the table column.
@@ -70,6 +74,8 @@ export type ColumnConfigurableProps<T extends Struct> = {
  * the CellFactory uses information passed down from the TableColumn to configure
  * its renderer, the CellFactory does not allow the props to trickle down. Its
  * props can be quite different from the props it ultimately sets on its renderer.
+ *
+ * @param T the type of data contained in a Record
  */
 export type CellFactoryProps<T extends Struct> = {
     rowIndex: number,

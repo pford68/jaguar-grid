@@ -1,8 +1,10 @@
+import {Command} from "../../types/types";
+
 /**
  * Base class for Commands
  * @param T The parameter type used by the Command
  */
-export default class BaseCommand<T> {
+export default class BaseCommand<T>  implements Command<T>{
     readonly #params: T[];
 
     constructor() {
@@ -15,5 +17,17 @@ export default class BaseCommand<T> {
 
     getParameters(): T[] {
         return this.#params;
+    }
+
+    execute(): boolean {
+        return false;
+    }
+
+    redo(): boolean {
+        return false;
+    }
+
+    undo(): boolean {
+        return false;
     }
 }

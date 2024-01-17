@@ -1,3 +1,6 @@
+import {ReactNode} from "react";
+import {IconProp} from "@fortawesome/fontawesome-svg-core";
+
 export type Consumer<T> = (value: T) => void;
 export type BiConsumer<T, U> = (value1:T, value2:U) => void;
 export type Operator<T> = (value:T) => T;
@@ -25,9 +28,9 @@ export interface Command<T> {
     redo(): boolean,
     setParameter(param: T): void;
     getParameters(): T[];
-    icon?: string,
+    icon?: IconProp,
     name?: string,
-    shortCut?: string,
+    shortCut?: ReactNode,
 }
 
 
