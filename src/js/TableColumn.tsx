@@ -1,5 +1,5 @@
 import React, {ReactElement, useContext, useEffect, useRef, useState, DragEvent} from "react";
-import {BiFunction, Struct} from "../types/types";
+import {BiFunction, Command, Struct} from "../types/types";
 import styles from "./DataGrid.css";
 import {GridContext} from "./GridContext";
 import {DataTypes} from "../types/types";
@@ -19,6 +19,8 @@ type TableColumnState = {
 /**
  * Extends ColumnConfigurableProps so that the CellFactory can be configured from the TableColumn.
  * @augments ColumnConfigurableProps
+ *
+ * @param T The data type of the data contained in the Record that supplies row data.
  */
 export type TableColumnProps<T extends Struct> = {
     /**
@@ -71,6 +73,7 @@ export type TableColumnProps<T extends Struct> = {
     onResize?: (colName: string, delta: number) => void,
     /** The HTML title attribute */
     title: boolean,
+    contextMenu?: Command<T>[],
 } & ColumnConfigurableProps<T>;
 
 

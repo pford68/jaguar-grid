@@ -6,14 +6,25 @@
     filter: grayscale(50%);
 }
 
+
+
 .layer {
-    width: 100vh;
+    width: 100vw;
     height: 100vh;
-    background-color: transparent;
+    background-color: var(--modal-layer-bgolor, transparent);
     position: absolute;
     top: 0;
     left: 0;
-    z-index: 1000;
+    z-index: var(--modal-layer-zIndex, 1000);
+    border: none;
+}
+.layer.nonModal {
+    pointer-events: none;
+}
+.layer.center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .menu {
@@ -42,4 +53,38 @@
 .menuItem .shortCut {
     opacity: 0.5;
 }
+
+.dialog {
+    display: flex;
+    flex-direction: column;
+    justify-items: flex-start;
+    row-gap: 10px;
+    resize: both;
+    overflow: scroll;
+}
+.dialog .titlebar {
+    display: flex;
+    justify-content: space-between;
+    height: fit-content;
+}
+.dialog .titlebar .title {
+    font-weight: bold;
+}
+.dialog .titlebar .corner {
+    height: 100%;
+    width: 15px;
+    box-sizing: border-box;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+}
+.dialog .titlebar .corner.control {
+    cursor: pointer;
+}
+.dialog .content {
+    flex-grow: 1;
+    overflow: auto;
+}
+
+
 

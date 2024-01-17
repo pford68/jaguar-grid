@@ -1,4 +1,4 @@
-import React, {ReactElement, useCallback, useEffect, useRef} from "react";
+import React, {ReactNode, useCallback, useEffect, useRef} from "react";
 import {createPortal} from "react-dom";
 import styles from "./menus.css";
 import {joinCss} from "../util/utils";
@@ -6,14 +6,16 @@ import {Consumer} from "../../types/types";
 
 type PopProps = {
     visible: boolean,
-    children: ReactElement | ReactElement[],
-    top: number,
-    left: number,
+    children: ReactNode | ReactNode[],
     offsetLeft: number,
     offsetTop: number,
+    top?: number,
+    left?: number,
     noContextMenu?: boolean,
     className?: string;
     onClickOutside?: Consumer<void>,
+    modal: boolean,
+    center: boolean,
 }
 
 /**
@@ -22,7 +24,7 @@ type PopProps = {
  * @param props
  * @constructor
  */
-export default function Popup(props: PopProps): ReactElement | ReactElement[] {
+export default function Popup(props: PopProps): ReactNode | ReactNode[] {
     const {
         visible,
         children,
@@ -33,22 +35,29 @@ export default function Popup(props: PopProps): ReactElement | ReactElement[] {
         offsetTop,
         offsetLeft,
         noContextMenu,
+        modal,
+        center,
     } = props;
 
     const ref = useRef<HTMLDivElement | null>(null);
 
     const normalizePosition = useCallback(
-        (): {left: number, top: number} => {
-            const result = {left, top};
-            if (ref.current != null) {
-                if (window.innerWidth - left < (ref.current.offsetWidth - offsetLeft)) {
+        (): {left?: number, top?: number} => {
+            if (ref.current != null && left != null && top != null) {
+                const result = {left, top};
+                if (window.innerWidth - left < (ref.current.offsetWidth + offsetLeft)) {
                     result.left = left - ref.current.offsetWidth - offsetLeft;
+                } else {
+                    result.left += offsetLeft;
                 }
-                if (window.innerHeight - top < ref.current.offsetHeight - offsetTop) {
+                if (window.innerHeight - top < ref.current.offsetHeight + offsetTop) {
                     result.top = top - ref.current.offsetHeight - offsetTop;
+                } else {
+                    result.top += offsetTop;
                 }
+                return result;
             }
-            return result;
+            return {};
         },
         [left, top, ref, offsetLeft, offsetTop],
     );
@@ -102,7 +111,13 @@ export default function Popup(props: PopProps): ReactElement | ReactElement[] {
 
     if (visible && document.body != null) {
         return createPortal((
-            <div className={styles.layer}>
+            <div
+                className={joinCss(
+                    styles.layer,
+                    !modal ? styles.nonModal : "",
+                    center ? styles.center : "",
+                )}
+            >
                 <div
                     ref={ref}
                     className={joinCss(styles.popup, className)}
@@ -113,9 +128,11 @@ export default function Popup(props: PopProps): ReactElement | ReactElement[] {
             </div>
         ), document.body);
     }
-    return <></>;
+    return "";
 }
 Popup.defaultProps = {
     offsetLeft: 0,
     offsetTop: 0,
+    modal: true,
+    center: false,
 }
