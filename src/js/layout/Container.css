@@ -1,6 +1,7 @@
 .container {
     overflow: auto;
     box-sizing: border-box;
+    position: relative;
 }
 .container.resizable {
     resize: vertical;

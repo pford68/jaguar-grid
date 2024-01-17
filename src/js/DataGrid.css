@@ -222,3 +222,14 @@
 .header.number .title {
     justify-content: end;
 }
+
+
+.edge {
+    width: 0;
+    height: 100%;
+    border: 3px solid gray;
+    position: absolute;
+    z-index: 100;
+    box-sizing: border-box;
+    visibility: hidden;
+}

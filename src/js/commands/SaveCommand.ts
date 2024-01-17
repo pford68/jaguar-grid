@@ -2,6 +2,7 @@ import BaseCommand from "./BaseCommand";
 import {Command, Struct} from "../../types/types";
 import ObservableList, {PartialUpdate} from "../ObservableList";
 import {isSubSet} from "../util/utils";
+import {IconProp} from "@fortawesome/fontawesome-svg-core";
 
 
 /**
@@ -11,9 +12,9 @@ export default class SaveCommand<T extends Struct>
     extends BaseCommand<PartialUpdate<T>>
     implements Command<PartialUpdate<T>>
 {
-    readonly icon: string = "save";
+    readonly icon: IconProp = "save";
     readonly name: string = "Save";
-    readonly shortCut: string = "&#8984+s";
+    readonly shortCut: string = "⌘+s";
     readonly #items: ObservableList<T>;
 
     constructor(items: ObservableList<T>) {

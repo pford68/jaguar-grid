@@ -3,6 +3,7 @@ import {v4 as uuid} from "uuid";
 import BaseCommand from "./BaseCommand";
 import {Record} from "../ObservableList";
 import {isTextSelected} from "../util/utils";
+import {IconProp} from "@fortawesome/fontawesome-svg-core";
 
 type CopyParameter<T extends Struct> = {
     /** The order of column names in the data. */
@@ -14,9 +15,9 @@ export default class CopyCommand<T extends Struct>
     extends BaseCommand<CopyParameter<T>>
     implements Command<CopyParameter<T>>
 {
-    icon: string = "copy";
+    icon: IconProp = "copy";
     name: string = "Copy";
-    readonly shortCut: string = "&#8984+c";
+    readonly shortCut: string = "⌘+c";
     readonly #selectedItems: Record<T>[];
     static TOKEN: string = uuid();
 

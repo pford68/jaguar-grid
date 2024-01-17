@@ -1,7 +1,7 @@
 import React, {ReactElement, KeyboardEvent, useReducer, useRef, useCallback, useEffect} from "react";
 import PageFactory from "./PageFactory";
 import ObservableList, {Record} from "./ObservableList";
-import type {Struct} from "../types/types";
+import type {Command, Struct} from "../types/types";
 import styles from "./DataGrid.css";
 import {joinCss} from "./util/utils";
 import {GridContext} from "./GridContext";
@@ -74,6 +74,7 @@ export type DataGridProps = {
      * @todo
      */
     secondarySort?: boolean,
+    contextMenuItems?: Command<Struct>[],
 }
 
 export type GridState = {
@@ -125,6 +126,7 @@ export default function DataGrid(props: DataGridProps): ReactElement {
         rowHeight,
         pageSize,
         children,
+        contextMenuItems,
     } = props;
 
     const containerWidth: number = 0, containerHeight: number = 0;
@@ -260,6 +262,7 @@ export default function DataGrid(props: DataGridProps): ReactElement {
             nullable,
             columnSizing,
             alternateRows,
+            contextMenuItems,
         }}>
             <ColumnStyle
                 type={finalColumnSizing == "auto" || finalColumnSizing == "equal" ? finalColumnSizing : "auto"}

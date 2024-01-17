@@ -10,6 +10,9 @@ import NumericRenderer from "../src/js/renderers/NumericRenderer";
 import people from "../tests/fixtures/people.json";
 import airlineSafety from "../tests/fixtures/airline_safety.json";
 import Container from "../src/js/layout/Container";
+import BaseCommand from "../src/js/commands/BaseCommand";
+import {Struct} from "../src/types/types";
+import {IconProp} from "@fortawesome/fontawesome-svg-core";
 
 
 type PropsAndArgs = React.ComponentProps<typeof DataGrid> & {
@@ -35,10 +38,47 @@ export default meta;
 type Story = StoryObj<PropsAndArgs>;
 
 
+class FileCommand extends BaseCommand<Struct>{
+    get icon():IconProp { return "file"}
+    get name() { return "File"}
+    get shortCut() { return "⌘+f"}
+    execute(): boolean {
+
+        return true;
+    }
+}
+
+class PrintCommand extends BaseCommand<Struct>{
+    get icon():IconProp { return "print"}
+    get name():string { return "Print"}
+    get shortCut() { return "⌘+p"}
+    execute(): boolean {
+        window.print();
+        return true;
+    }
+}
+
+class HighlightCommand extends BaseCommand<Struct>{
+    get icon():IconProp { return "bomb"}
+    get name() { return "Self-Destruct"}
+    get shortCut() { return "⌘+h"}
+    execute(): boolean {
+        alert("Why would you select a menu item labeled \"self-destruct\"?");
+        return true;
+    }
+}
+
+
 const defaultRenderer = (args: PropsAndArgs) => {
     const props = {...args, width: undefined};
     return (
-        <DataGrid {...props}>
+        <DataGrid
+            {...props}
+            contextMenuItems={[
+                new FileCommand(),
+                new PrintCommand(),
+            ]}
+        >
             <TableColumn name="firstName" text="First Name" validator={v => v != "Bob"} />
             <TableColumn name="lastName" text="Last Name" required />
             <TableColumn type="currency" name="amount" text="Amount" />
