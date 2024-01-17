@@ -1,5 +1,5 @@
 import * as React from "react";
-import {Meta, StoryObj, forceReRender} from "@storybook/react";
+import {Meta, StoryObj} from "@storybook/react";
 import Dialog from "../../src/js/menus/Dialog";
 import styles from "../css/Popup.stories.css"
 import {useState} from "react";
