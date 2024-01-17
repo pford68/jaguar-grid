@@ -13,6 +13,7 @@ import {CommandStack} from "./util/CommandStack";
 import {useStorageClipboard} from "./clipboard/useStorageClipboard";
 import TableColumn from "./TableColumn";
 import TableFooter from "./TableFooter";
+import ContextMenu from "./menus/ContextMenu";
 
 
 export type DataGridProps = {
@@ -74,7 +75,7 @@ export type DataGridProps = {
      * @todo
      */
     secondarySort?: boolean,
-    contextMenu?: Command<Struct>[],
+    contextMenuItems?: Command<Struct>[],
 }
 
 export type GridState = {
@@ -126,6 +127,7 @@ export default function DataGrid(props: DataGridProps): ReactElement {
         rowHeight,
         pageSize,
         children,
+        contextMenuItems,
     } = props;
 
     const containerWidth: number = 0, containerHeight: number = 0;
@@ -291,6 +293,11 @@ export default function DataGrid(props: DataGridProps): ReactElement {
                 />
             </div>
             {getFooter() ?? ""}
+            {
+                contextMenuItems != null
+                ? <ContextMenu commands={contextMenuItems} targetRef={gridRef} />
+                : ""
+            }
         </GridContext.Provider>
     )
 }
