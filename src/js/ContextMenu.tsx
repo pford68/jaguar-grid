@@ -1,9 +1,10 @@
 import React, {ReactElement, RefObject, useEffect, useRef, useState} from "react";
-import {Command} from "../../types/types";
-import Popup from "./Popup";
-import MenuItem from "./MenuItem";
-import {joinCss} from "../util/utils";
-import styles from "./menus.css";
+import {Command} from "../types/types";
+import Popup from "./core/Popup";
+import MenuItem from "./core/MenuItem";
+import {joinCss} from "./util/utils";
+import styles from "./core/menus.css";
+import Menu from "./core/Menu";
 
 type ContextMenuProps = {
     commands: Command<unknown>[],
@@ -20,10 +21,15 @@ export default function ContextMenu(props: ContextMenuProps): ReactElement {
     } = props;
     const [state, setState] = useState({visible: false, top: 0, left:0 });
     const popupRef: RefObject<HTMLDivElement> = useRef(null);
+    const eventTarget = useRef<HTMLElement>(null);
 
     useEffect(() => {
         const onContextMenu = (e: MouseEvent):void => {
             e.preventDefault();
+            if (e.target instanceof HTMLElement) {
+                // @ts-ignore
+                eventTarget.current = e.target;
+            }
             setState((prev => {
                 return {
                     visible: !prev.visible,
@@ -44,19 +50,15 @@ export default function ContextMenu(props: ContextMenuProps): ReactElement {
         }
     }, [targetRef.current, popupRef]);
 
-
     if (state.visible) {
         return (
-            <Popup
+            <Menu
+                commands={commands}
                 visible={state.visible}
                 top={state.top}
                 left={state.left}
                 className={joinCss(styles.menu, className)}
-                onClickOutside={() => setState({...state, visible: false})}
-                noContextMenu
-            >
-                {commands.map((c, index) => <MenuItem key={index} command={c} />)}
-            </Popup>
+            />
         );
     }
     return <></>;

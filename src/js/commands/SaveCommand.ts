@@ -14,7 +14,7 @@ export default class SaveCommand<T extends Struct>
 {
     readonly icon: IconProp = "save";
     readonly name: string = "Save";
-    readonly shortCut: string = "⌘+s";
+    readonly accelerator: string = "⌘+s";
     readonly #items: ObservableList<T>;
 
     constructor(items: ObservableList<T>) {

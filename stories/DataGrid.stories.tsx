@@ -3,7 +3,7 @@ import {Meta, StoryObj} from "@storybook/react";
 import DataGrid from "../src/js/DataGrid";
 import TableColumn from "../src/js/TableColumn";
 import ObservableList, {Record} from "../src/js/ObservableList";
-import {useRef} from "react";
+import {RefObject, useRef} from "react";
 import TableFooter from "../src/js/TableFooter";
 import Person, {Measurements} from "../tests/models/Person";
 import NumericRenderer from "../src/js/renderers/NumericRenderer";
@@ -38,30 +38,26 @@ export default meta;
 type Story = StoryObj<PropsAndArgs>;
 
 
-class FileCommand extends BaseCommand<Struct>{
-    get icon():IconProp { return "file"}
-    get name() { return "File"}
-    get shortCut() { return "⌘+f"}
-    execute(): boolean {
-
+class LogCommand extends BaseCommand<{targetRef: RefObject<HTMLElement>}>{
+    get icon():IconProp { return "pencil"}
+    get name() { return "Log"}
+    get accelerator() { return "⌘+l"}
+    execute = (): boolean => {
+        console.log("execute", this.getParameters()[0]);
+        const param = this.getParameters().pop();
+        const {targetRef} = param ?? {};
+        if (targetRef?.current) {
+            console.log("Value: ", targetRef.current.textContent);
+        }
         return true;
     }
 }
 
-class PrintCommand extends BaseCommand<Struct>{
-    get icon():IconProp { return "print"}
-    get name():string { return "Print"}
-    get shortCut() { return "⌘+p"}
-    execute(): boolean {
-        window.print();
-        return true;
-    }
-}
 
 class HighlightCommand extends BaseCommand<Struct>{
     get icon():IconProp { return "bomb"}
     get name() { return "Self-Destruct"}
-    get shortCut() { return "⌘+h"}
+    get accelerator() { return "⌘+h"}
     execute(): boolean {
         alert("Why would you select a menu item labeled \"self-destruct\"?");
         return true;
@@ -75,8 +71,7 @@ const defaultRenderer = (args: PropsAndArgs) => {
         <DataGrid
             {...props}
             contextMenuItems={[
-                new FileCommand(),
-                new PrintCommand(),
+                new LogCommand(),
             ]}
         >
             <TableColumn name="firstName" text="First Name" validator={v => v != "Bob"} />

@@ -7,7 +7,7 @@ export default class CutCommand<T extends Struct> extends CopyCommand<T> {
 
     icon: IconProp = "cut";
     name: string = "Cut";
-    readonly shortCut: string = "⌘+x";
+    readonly accelerator: string = "⌘+x";
     readonly #previous: {id: string, clone: Record<T>}[];
 
     constructor(selectedItems: Record<T>[]) {

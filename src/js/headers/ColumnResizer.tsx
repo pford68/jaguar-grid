@@ -6,8 +6,6 @@ import React, {
     ReactNode,
     useState,
     RefObject,
-    MouseEvent,
-    useEffect
 } from "react";
 import styles from "../DataGrid.css";
 import {joinCss} from "../util/utils";
@@ -34,7 +32,6 @@ export default function ColumnResizer(props: ColumnResizerProps): ReactElement {
         e.dataTransfer.effectAllowed = "move";
         start.current = e.clientX;
         setActive(true);
-        //hideDragImage(e, gridEl, ref);
     }
 
     const onDragEnd = (): void => {
@@ -43,7 +40,6 @@ export default function ColumnResizer(props: ColumnResizerProps): ReactElement {
          Using the clientX captured in onDrag
          */
         const delta = end.current - start.current; // Safari reports an incorrect clientX from onDragEnd.
-        //cleanup(gridEl);
         setActive(false);
         onResize(delta);
     }
@@ -98,24 +94,4 @@ function Edge(props: EdgeProps): ReactNode {
             />), gridEl);
     }
     return "";
-}
-
-
-const hideDragImage = (e: DragEvent, gridEl: HTMLElement | null | undefined, ref: RefObject<HTMLDivElement>) => {
-    if (ref.current instanceof HTMLElement) {
-        const clone = ref.current.cloneNode();
-        if (clone instanceof HTMLElement) {
-            gridEl?.appendChild(clone);
-            clone.style.visibility = "hidden";
-            clone.setAttribute("data-drag-image", "true");
-            e.dataTransfer.setDragImage(clone, 0, 0);
-        }
-    }
-}
-
-const cleanup = (gridEl: HTMLElement | undefined | null) => {
-    const dragImage = gridEl?.querySelector("[data-drag-image]");
-    if (dragImage != null) {
-        gridEl?.removeChild(dragImage);
-    }
 }

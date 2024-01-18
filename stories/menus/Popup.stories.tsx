@@ -1,6 +1,6 @@
 import * as React from "react";
 import {Meta, StoryObj} from "@storybook/react";
-import Popup from "../../src/js/menus/Popup";
+import Popup from "../../src/js/core/Popup";
 import styles from "../css/Popup.stories.css"
 
 
@@ -11,7 +11,7 @@ type PropsAndArgs = React.ComponentProps<typeof Popup> & {
 
 
 const meta: Meta<PropsAndArgs> = {
-    title: "menus/Popup",
+    title: "core/Popup",
     component: Popup,
     args: {
         visible: true,

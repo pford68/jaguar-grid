@@ -30,7 +30,7 @@ export interface Command<T> {
     getParameters(): T[];
     icon?: IconProp,
     name?: string,
-    shortCut?: ReactNode,
+    accelerator?: ReactNode,
 }
 
 

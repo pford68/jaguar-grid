@@ -17,7 +17,7 @@ export default class CopyCommand<T extends Struct>
 {
     icon: IconProp = "copy";
     name: string = "Copy";
-    readonly shortCut: string = "⌘+c";
+    readonly accelerator: string = "⌘+c";
     readonly #selectedItems: Record<T>[];
     static TOKEN: string = uuid();
 
