@@ -11,7 +11,7 @@ type PropsAndArgs = React.ComponentProps<typeof Dialog> & {
 };
 
 const meta: Meta<PropsAndArgs> = {
-    title: "menus/Dialog",
+    title: "core/Dialog",
     component: Dialog,
     args: {
         width: 800,
