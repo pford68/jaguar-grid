@@ -18,6 +18,7 @@ export default function BooleanRenderer(props: BooleanRendererProps): React.Reac
         active,
         format,
         validator,
+        readonly,
     } = props;
 
     const baseClassName = joinCss(styles.renderer, styles.boolean, className);
@@ -25,6 +26,7 @@ export default function BooleanRenderer(props: BooleanRendererProps): React.Reac
     const inputProps = {
         name,
         value: (value === true ? "true" : "false"),
+        readonly,
         className: joinCss(baseClassName, styles.active),
         // "switch" is weeded out, but format == switch is handled later on.
         type: format,
