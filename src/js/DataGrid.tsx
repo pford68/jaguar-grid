@@ -1,4 +1,13 @@
-import React, {ReactElement, KeyboardEvent, useReducer, useRef, useCallback, useEffect} from "react";
+import React, {
+    ReactElement,
+    KeyboardEvent,
+    useReducer,
+    useRef,
+    useCallback,
+    useEffect,
+    useContext,
+    RefObject
+} from "react";
 import PageFactory from "./PageFactory";
 import ObservableList, {Record} from "./ObservableList";
 import type {Command, Struct} from "../types/types";
@@ -13,6 +22,8 @@ import {CommandStack} from "./util/CommandStack";
 import {useStorageClipboard} from "./clipboard/useStorageClipboard";
 import TableColumn from "./TableColumn";
 import TableFooter from "./TableFooter";
+import ContextMenu from "./ContextMenu";
+import {ContainerContext} from "./layout/Container";
 
 
 export type DataGridProps = {
@@ -75,6 +86,7 @@ export type DataGridProps = {
      */
     secondarySort?: boolean,
     contextMenuItems?: Command<Struct>[],
+    containerRef?: RefObject<HTMLElement>,
 }
 
 export type GridState = {
@@ -127,6 +139,7 @@ export default function DataGrid(props: DataGridProps): ReactElement {
         pageSize,
         children,
         contextMenuItems,
+        containerRef,
     } = props;
 
     const containerWidth: number = 0, containerHeight: number = 0;
@@ -246,6 +259,11 @@ export default function DataGrid(props: DataGridProps): ReactElement {
 
     const columnWidths = useRef(new Map(visibleColumns.map(col => [col.props.name, col.props.width])))
     const finalColumnSizing = columnSizing && !state.fitContainer ? columnSizing : "equal";
+    const containerContext = useContext(ContainerContext);
+    const container = containerRef != null
+        ? containerRef.current :
+        (containerContext.containerRef?.current ?? undefined);
+
 
     return (
         <GridContext.Provider value={{
@@ -278,21 +296,37 @@ export default function DataGrid(props: DataGridProps): ReactElement {
                 )}
                 onKeyDown={onKeyDown}
             >
-                <div className={joinCss(
-                    styles.row,
-                    stickyHeaders ? styles.stickyHeaders : ""
-                )}>
+                <div
+                    className={joinCss(
+                        styles.row,
+                        stickyHeaders ? styles.stickyHeaders : ""
+                    )}
+                    onContextMenuCapture={e => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                    }}
+                >
                     {visibleColumns}
                 </div>
                 <PageFactory
                     data={data.getAll()}
-                    root={gridRef.current?.parentElement}
+                    root={container}
                     offset={pageSize * rowHeight}
                     pageSize={8}
                     rowHeight={rowHeight}
                 />
             </div>
             {getFooter() ?? ""}
+            {
+                contextMenuItems
+                    ? (
+                        <ContextMenu
+                            commands={contextMenuItems}
+                            targetRef={gridRef}
+                        />
+                    )
+                    : ""
+            }
         </GridContext.Provider>
     )
 }

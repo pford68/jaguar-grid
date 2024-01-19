@@ -30,12 +30,14 @@
 .menu {
     display: inline-flex;
     flex-direction: column;
+    --popup-padding: 4px;
 }
 
 .menuItem {
     display: flex;
     justify-content: space-between;
     padding: 5px 8px;
+    font-size: 10pt;
 }
 .menuItem .left {
     display: grid;
@@ -47,11 +49,16 @@
 .menuItem:hover {
     background-color: #1ea7fd;
     border-radius: 5px;
+    color: #eaeaea;
 }
 .menuItem .icon {
 }
-.menuItem .shortCut {
+.menuItem .accelerator {
     opacity: 0.5;
+}
+
+.contextmenu {
+    width: 200px;
 }
 
 .dialog {

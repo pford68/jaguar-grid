@@ -41,6 +41,8 @@ export default function PageFactory<T extends Struct>(props: PageFactoryProps<T>
 
     const visiblePages = useRef<Set<number>>(new Set([]));
     const emitter = useRef<Emitter<IntersectionResult>>(new Emitter());
+
+    // IntersectionObserver: one for all pages
     const observer = useRef(new IntersectionObserver(intersectionCallback.bind(null, emitter, visiblePages), {
         root,
         rootMargin: `${offset}px 0px`,
@@ -82,6 +84,7 @@ type PageProps<T extends Struct> = {
 };
 
 /**
+ * Displays a subset of possible rows, once the page is in view.  Used for virtualization.
  *
  * @param props
  * @constructor
@@ -145,7 +148,7 @@ function Page<T extends Struct>(props: PageProps<T>): ReactElement {
     }, [emitter.current]);
 
 
-    /* IntersectionObserver */
+    /* IntersectionObserver: start observing  */
     useEffect(() => {
         if (ref.current) {
             observer.observe(ref.current);

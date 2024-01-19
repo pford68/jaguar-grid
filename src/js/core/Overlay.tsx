@@ -4,7 +4,7 @@ import styles from "./menus.css";
 import {joinCss} from "../util/utils";
 import {Consumer} from "../../types/types";
 
-type PopProps = {
+type OverlayProps = {
     visible: boolean,
     children: ReactNode | ReactNode[],
     offsetLeft: number,
@@ -24,7 +24,7 @@ type PopProps = {
  * @param props
  * @constructor
  */
-export default function Popup(props: PopProps): ReactNode | ReactNode[] {
+export default function Overlay(props: OverlayProps): ReactNode | ReactNode[] {
     const {
         visible,
         children,
@@ -64,27 +64,6 @@ export default function Popup(props: PopProps): ReactNode | ReactNode[] {
 
 
     useEffect(() => {
-        if (onClickOutside != null) {
-            const onBodyClick = (e: MouseEvent) => {
-                if (e.target instanceof HTMLElement
-                    && ref.current != null
-                    && !ref.current.contains(e.target)) {
-                    onClickOutside();
-                }
-            }
-            if (document.body != null) {
-                document.body.addEventListener("click", onBodyClick);
-            }
-
-            return () => {
-                if (document.body != null) {
-                    document.body.removeEventListener("click", onBodyClick);
-                }
-            }
-        }
-    }, []);
-
-    useEffect(() => {
         if (noContextMenu && ref.current) {
             const onContextMenu = (e: MouseEvent) => {
                 e.preventDefault();
@@ -98,6 +77,7 @@ export default function Popup(props: PopProps): ReactNode | ReactNode[] {
             }
         }
     }, []);
+
 
     useEffect(() => {
         if (ref.current != null) {
@@ -130,7 +110,7 @@ export default function Popup(props: PopProps): ReactNode | ReactNode[] {
     }
     return "";
 }
-Popup.defaultProps = {
+Overlay.defaultProps = {
     offsetLeft: 0,
     offsetTop: 0,
     modal: true,

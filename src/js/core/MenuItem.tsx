@@ -25,7 +25,7 @@ export default function MenuItem<T>(props: MenuItemProps<T>): ReactElement {
                 </span>
                 <span>{command.name}</span>
             </span>
-            <span className={styles.shortCut}>{command.shortCut}</span>
+            <span className={styles.accelerator}>{command.accelerator}</span>
         </div>
     )
 }

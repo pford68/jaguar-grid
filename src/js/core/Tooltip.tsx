@@ -1,5 +1,5 @@
 import React, {ReactElement, ReactNode, MouseEvent, useState, useCallback} from "react";
-import Popup from "./Popup";
+import Overlay from "./Overlay";
 import styles from "./menus.css";
 import {joinCss} from "../util/utils";
 
@@ -45,7 +45,7 @@ export default function Tooltip(props: TooltipProps): ReactElement {
 
     return (
         <>
-            <Popup
+            <Overlay
                 visible={state.visible}
                 top={state.top}
                 left={state.left}
@@ -55,7 +55,7 @@ export default function Tooltip(props: TooltipProps): ReactElement {
                 modal={false}
             >
                 {text}
-            </Popup>
+            </Overlay>
             <div
                 onMouseOver={onMouseover}
                 onMouseOut={onMouseout}

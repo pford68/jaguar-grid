@@ -73,7 +73,6 @@ export type TableColumnProps<T extends Struct> = {
     onResize?: (colName: string, delta: number) => void,
     /** The HTML title attribute */
     title: boolean,
-    contextMenuItems?: Command<T>[],
 } & ColumnConfigurableProps<T>;
 
 

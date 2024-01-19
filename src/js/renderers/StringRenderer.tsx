@@ -19,6 +19,7 @@ export default function StringRenderer(props: StringProps): React.ReactElement {
         rendererRef,
         className,
         validator,
+        readonly,
     } = props;
 
     const baseClassName = joinCss(styles.renderer, styles.text, className);
@@ -26,6 +27,7 @@ export default function StringRenderer(props: StringProps): React.ReactElement {
     const nextProps = {
         ...props,
         name,
+        readonly,
         value: String(value),
         placeholder: String(props.placeholder),
         className: joinCss(baseClassName, styles.active),
