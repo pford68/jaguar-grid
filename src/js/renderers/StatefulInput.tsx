@@ -16,7 +16,7 @@ import styles from "./Renderers.css";
 type StatefulInputProps = {
     name: string,
     type: "text" | "date" | "checkbox" | "radio" | "number" | "multiline" | "email" | "tel" | "range" | "url";
-    value: string,
+    value: string | undefined,
     onChange?: Consumer<string>,
     onFocus?: Consumer<FocusEvent>,
     onBlur?: Consumer<FocusEvent>,
@@ -24,7 +24,7 @@ type StatefulInputProps = {
     onClick?: Consumer<MouseEvent>,
     readonly?: boolean,
     className?: string,
-    validator?: Predicate<string>,
+    validator?: Predicate<string | undefined>,
     autofocus?: boolean,
     required?: boolean,
     placeholder?: string,

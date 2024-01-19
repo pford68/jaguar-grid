@@ -28,7 +28,7 @@ export default function StringRenderer(props: StringProps): React.ReactElement {
         ...props,
         name,
         readonly,
-        value: String(value),
+        value: value != null ? String(value) : undefined,
         placeholder: String(props.placeholder),
         className: joinCss(baseClassName, styles.active),
     }
