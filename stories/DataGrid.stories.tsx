@@ -82,7 +82,7 @@ const defaultRenderer = (args: PropsAndArgs) => {
                 new LogCommand(),
             ]}
         >
-            <TableColumn name="firstName" text="First Name" validator={v => v != "Bob"} readonly={true} />
+            <TableColumn name="firstName" text="First Name" validator={v => v != "Bob"} contextMenuItems={[new HighlightCommand()]} />
             <TableColumn name="lastName" text="Last Name" required />
             <TableColumn type="currency" name="amount" text="Amount" />
             <TableColumn type="number" name="age" text="Age" />
