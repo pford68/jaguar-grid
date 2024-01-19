@@ -13,6 +13,7 @@ import Container from "../src/js/layout/Container";
 import BaseCommand from "../src/js/commands/BaseCommand";
 import {Struct} from "../src/types/types";
 import {IconProp} from "@fortawesome/fontawesome-svg-core";
+import SelectionModel from "../src/js/SelectionModel";
 
 
 type PropsAndArgs = React.ComponentProps<typeof DataGrid> & {
@@ -37,13 +38,20 @@ export default meta;
 
 type Story = StoryObj<PropsAndArgs>;
 
+type GridContextMenuParams = {
+    targetRef: RefObject<HTMLElement>,
+    selectionModel: SelectionModel,
+    items: ObservableList<Struct>,
+}
 
-class LogCommand extends BaseCommand<{targetRef: RefObject<HTMLElement>}>{
+class LogCommand extends BaseCommand<GridContextMenuParams>{
     get icon():IconProp { return "pencil"}
     get name() { return "Log"}
     get accelerator() { return "⌘+l"}
     execute = (): boolean => {
         console.log("execute", this.getParameters()[0]);
+        console.log("execute: selectedItems", this.getParameters()[0].selectionModel.getSelectedItem());
+        console.log("execute: name", this.getParameters()[0].targetRef.current?.getAttribute("[data-col-name]"));
         const param = this.getParameters().pop();
         const {targetRef} = param ?? {};
         if (targetRef?.current) {
@@ -74,7 +82,7 @@ const defaultRenderer = (args: PropsAndArgs) => {
                 new LogCommand(),
             ]}
         >
-            <TableColumn name="firstName" text="First Name" validator={v => v != "Bob"} />
+            <TableColumn name="firstName" text="First Name" validator={v => v != "Bob"} readonly={true} />
             <TableColumn name="lastName" text="Last Name" required />
             <TableColumn type="currency" name="amount" text="Amount" />
             <TableColumn type="number" name="age" text="Age" />

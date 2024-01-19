@@ -1,18 +1,18 @@
 import * as React from "react";
 import {Meta, StoryObj} from "@storybook/react";
-import Popup from "../../src/js/core/Popup";
+import Overlay from "../../src/js/core/Overlay";
 import styles from "../css/Popup.stories.css"
 
 
-type PropsAndArgs = React.ComponentProps<typeof Popup> & {
+type PropsAndArgs = React.ComponentProps<typeof Overlay> & {
     width: number,
     height: number,
 };
 
 
 const meta: Meta<PropsAndArgs> = {
-    title: "core/Popup",
-    component: Popup,
+    title: "core/Overlay",
+    component: Overlay,
     args: {
         visible: true,
         top: 10,
@@ -31,9 +31,9 @@ type Story = StoryObj<PropsAndArgs>;
 const defaultRenderer = (args: PropsAndArgs) => {
     const props = {...args, width: undefined, height: undefined};
     return (
-        <Popup {...props} >
+        <Overlay {...props} >
             <div>This is a popup.  This is the base component for dropdowns and menus.</div>
-        </Popup>
+        </Overlay>
     );
 };
 

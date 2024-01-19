@@ -94,6 +94,7 @@
     border-left: none;
     height: var(--local-row-height);
     box-sizing: border-box;
+    cursor: text;
 }
 .cell:focus, .cell:focus-within {
     user-select: text;
@@ -132,6 +133,10 @@
 
 .cell .invalid {
     border: 1px solid red;
+}
+
+.cell.readonly {
+    cursor: default !important;
 }
 
 

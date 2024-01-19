@@ -1,6 +1,6 @@
 import React, {ReactElement, ReactNode, MouseEvent} from "react";
 import {Consumer} from "../../types/types";
-import Popup from "./Popup";
+import Overlay from "./Overlay";
 import styles from "./menus.css";
 import {joinCss} from "../util/utils";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -27,7 +27,7 @@ export default function Dialog(props: DialogProps): ReactNode {
    } = props;
 
    return (
-       <Popup
+       <Overlay
            visible={visible}
            className={joinCss(styles.dialog, className)}
            center={true}
@@ -45,6 +45,6 @@ export default function Dialog(props: DialogProps): ReactNode {
            <div className={joinCss(styles.content, contentClass)}>
                 {children}
            </div>
-       </Popup>
+       </Overlay>
    )
 }

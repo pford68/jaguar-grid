@@ -1,6 +1,6 @@
-import React, {ReactElement} from "react";
-import {Command} from "../../types/types";
-import Popup from "./Popup";
+import React, {ReactElement, MouseEvent} from "react";
+import {Command, Consumer} from "../../types/types";
+import Overlay from "./Overlay";
 import MenuItem from "./MenuItem";
 import {joinCss} from "../util/utils";
 import styles from "./menus.css";
@@ -10,6 +10,7 @@ type MenuProps = {
     visible: boolean,
     top: number,
     left: number,
+    onClick?: Consumer<MouseEvent>,
     className?: string,
 }
 
@@ -20,6 +21,7 @@ export default function Menu(props: MenuProps): ReactElement {
         visible,
         top,
         left,
+        onClick,
     } = props;
 
     const popupProps = {
@@ -30,14 +32,16 @@ export default function Menu(props: MenuProps): ReactElement {
 
 
     return (
-        <Popup
+        <Overlay
             {...popupProps}
             className={joinCss(styles.menu, className)}
             noContextMenu
         >
-            {commands.map((c, index) => {
-                return <MenuItem key={index} command={c}/>;
-            })}
-        </Popup>
+            <section onClick={onClick}>
+                {commands.map((c, index) => {
+                    return <MenuItem key={index} command={c}/>;
+                })}
+            </section>
+        </Overlay>
     );
 }

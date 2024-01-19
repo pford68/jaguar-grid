@@ -114,6 +114,7 @@ export default function CellFactory<T extends Struct>(props: CellFactoryProps<T>
         required,
         wrap,
         width,
+        readonly,
     } = props;
     const gridContext = useContext(GridContext);
     const {
@@ -271,6 +272,7 @@ export default function CellFactory<T extends Struct>(props: CellFactoryProps<T>
     const {top, right, bottom, left} = selectionModel?.edges ?? {};
     const finalClass = joinCss(
         styles.cell,
+        readonly ? styles.readonly : "",
         selected ? styles.selected : "",
         rowIndex === top ? styles.top : "",
         rowIndex === bottom ? styles.bottom : "",
@@ -317,6 +319,7 @@ export default function CellFactory<T extends Struct>(props: CellFactoryProps<T>
         name,
         editable,
         rendererRef,
+        readonly,
         value,
         format,
         rowIndex,
