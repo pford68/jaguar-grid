@@ -42,8 +42,7 @@ export type DataGridProps = {
     alternateRows: boolean,
     stickyHeaders: boolean,
     /**
-     * Whether a cell is allowed to display null or undefined.
-     * If false, a placholer appears instead.
+     * Whether a cell can be nulled-out.  If false, empty strings cannot be saved.
      *
      * @default false
      */

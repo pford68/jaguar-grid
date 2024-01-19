@@ -96,7 +96,7 @@ export type CustomRendererProps<T extends Struct, V> = BaseRendererProps<V> & Ce
  * @constructor
  */
 export default function CellFactory<T extends Struct>(props: CellFactoryProps<T>): ReactElement {
-    // ================================= Destructuring
+    // ================================= Declarations
     const {
         name,
         row,
@@ -129,14 +129,12 @@ export default function CellFactory<T extends Struct>(props: CellFactoryProps<T>
     } = gridContext;
     const selectionModel = gridContext.selectionModel?.current;
     const focusModel = gridContext.focusModel?.current;
-
     const focusMode = new FocusMode(gridContext);
     const editMode = new EditMode(gridContext);
     const pageContext = useContext(PageContext);
-
-    // =============================================== Refs
     const ref = useRef<HTMLDivElement>(null);
     const rendererRef = useRef<HTMLInputElement>(null);
+
 
     // ================================================= State
     const [state, dispatch] = useCellFactoryReducer({
@@ -147,6 +145,7 @@ export default function CellFactory<T extends Struct>(props: CellFactoryProps<T>
     const previousActiveState = usePreviousState({watch: state.active});
     const [selected, setSelected] = useState(false);
     const value = row.get(name);
+
 
     //==================================================== Effects
     /*
@@ -285,6 +284,12 @@ export default function CellFactory<T extends Struct>(props: CellFactoryProps<T>
         ],
     );
 
+    const onFocusWithin = useCallback(
+        () => focusModel?.sync(rowIndex, colIndex),
+        [focusModel, rowIndex, colIndex],
+    );
+
+
 
     // ============================================= Rendering
     const {top, right, bottom, left} = selectionModel?.edges ?? {};
@@ -355,8 +360,8 @@ export default function CellFactory<T extends Struct>(props: CellFactoryProps<T>
 
     return (
         <div
-            className={finalClass}
             tabIndex={0}
+            className={finalClass}
             data-row-index={rowIndex}
             data-col-index={colIndex}
             data-col-name={name}
@@ -364,14 +369,14 @@ export default function CellFactory<T extends Struct>(props: CellFactoryProps<T>
         >
             <div
                 ref={ref}
-                onFocus={() => focusModel?.sync(rowIndex, colIndex)}
                 tabIndex={-1}
+                className={!state.valid ? styles.invalid : ""}
+                onFocus={onFocusWithin}
                 onClick={onClick}
                 onDoubleClick={onClick}
                 onKeyDown={onKeyDown}
-                className={!state.valid ? styles.invalid : ""}
             >
-                {value == null && !nullable && !state.active ?
+                {value == null && !state.active ?
                     <Text value={placeholder} className={styles.null} validator={validator} /> :
                     (
                         CustomRenderer != null
@@ -382,7 +387,10 @@ export default function CellFactory<T extends Struct>(props: CellFactoryProps<T>
                 }
             </div>
             {contextMenuItems != null ? (
-                <ContextMenu commands={contextMenuItems} targetRef={ref} />
+                <ContextMenu
+                    commands={contextMenuItems}
+                    targetRef={ref}
+                />
             ) : ""}
         </div>
     )

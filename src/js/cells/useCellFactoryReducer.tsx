@@ -17,7 +17,12 @@ export default function useCellFactoryReducer(props: useReducerProps): [CellFact
 
     const {ref, name, rowIndex} = props;
     const gridContext = useContext(GridContext);
-    const {items, undoStack, redoStack} = gridContext;
+    const {
+        items,
+        undoStack,
+        redoStack,
+        nullable,
+    } = gridContext;
     const getParserByType = useParserRegistry();
 
     const reducer = (state: CellFactoryState, action: CellFactoryAction) => {
@@ -28,7 +33,7 @@ export default function useCellFactoryReducer(props: useReducerProps): [CellFact
             case "deactivate": { // Sends to focused mode and flushes changes.
                 const type = ref.current?.type ?? "string";
                 const value = ref.current?.value;
-                if (items != null && value != null) {
+                if (items != null && value != null && !(value.trim().length === 0 && !gridContext.nullable)) {
                     const parsedValue = getParserByType(value, type);
                     const cmd = new SaveCommand(items);
                     cmd.setParameter({index: rowIndex, value: {[name]: parsedValue}})
