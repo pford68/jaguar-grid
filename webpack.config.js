@@ -72,11 +72,15 @@ module.exports = {
                         },
                     },
                 ],
-            },/*
+            },
             {
                 test: /\.(png|jpg|svg)$/i,
-                loader: "file-loader",
-            },*/
+                use: [
+                    {
+                        loader: 'file-loader',
+                    },
+                ],
+            },
         ],
     },
     plugins: [

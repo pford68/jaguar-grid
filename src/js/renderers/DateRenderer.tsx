@@ -18,12 +18,14 @@ export default function DateRenderer(props: DateRendererProps): React.ReactEleme
         validator,
         addTime,
         rendererRef,
+        readonly
     } = props;
 
     const baseClassName = joinCss(styles.renderer, styles.date, className);
 
     const nextProps = {
         name,
+        readonly,
         className: joinCss(baseClassName, styles.active),
     };
 

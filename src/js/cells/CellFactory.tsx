@@ -7,8 +7,9 @@ import React, {
     useEffect,
     useRef,
     useState,
+    useCallback,
 } from "react";
-import {Consumer, Coordinates, Predicate, Struct} from "../../types/types";
+import {Command, Consumer, Coordinates, Predicate, Struct} from "../../types/types";
 import {GridContext} from "../GridContext";
 import {joinCss} from "../util/utils";
 import styles from "../DataGrid.css";
@@ -22,6 +23,7 @@ import useRegistry from "./useRegistry";
 import useCellFactoryReducer from "./useCellFactoryReducer";
 import usePreviousState from "./usePreviousState";
 import {PageContext} from "../PageContext";
+import ContextMenu from "../ContextMenu";
 
 /**
  * Cell renderer props that can be configured from a TableColumn.
@@ -67,6 +69,7 @@ export type ColumnConfigurableProps<T extends Struct> = {
     precision?: number,
     /** Whether text should wrap. */
     wrap?: boolean,
+    contextMenuItems?: Command<Struct>[],
 }
 
 /**
@@ -114,6 +117,8 @@ export default function CellFactory<T extends Struct>(props: CellFactoryProps<T>
         required,
         wrap,
         width,
+        readonly,
+        contextMenuItems,
     } = props;
     const gridContext = useContext(GridContext);
     const {
@@ -240,7 +245,7 @@ export default function CellFactory<T extends Struct>(props: CellFactoryProps<T>
 
 
     // ====================================== Event handlers
-    const onClick = (e: MouseEvent) => {
+    const onClick = useCallback((e: MouseEvent) => {
         const {detail} = e;
         switch (detail) {
             case 2:
@@ -258,19 +263,34 @@ export default function CellFactory<T extends Struct>(props: CellFactoryProps<T>
                     e.stopPropagation();
                 }
         }
-    }
+    }, [
+        state,
+        dispatch,
+        selectionModel,
+        focusModel
+    ]);
 
 
-    const onKeyDown = (e: KeyboardEvent) => {
-        state.active
-            ? editMode?.onKeyDown(e, dispatch)
-            : focusMode?.onKeyDown(e, dispatch);
-    };
+    const onKeyDown = useCallback(
+        (e: KeyboardEvent) => {
+            state.active
+                ? editMode?.onKeyDown(e, dispatch)
+                : focusMode?.onKeyDown(e, dispatch);
+        },
+        [
+            state,
+            editMode,
+            focusMode,
+            dispatch
+        ],
+    );
+
 
     // ============================================= Rendering
     const {top, right, bottom, left} = selectionModel?.edges ?? {};
     const finalClass = joinCss(
         styles.cell,
+        readonly ? styles.readonly : "",
         selected ? styles.selected : "",
         rowIndex === top ? styles.top : "",
         rowIndex === bottom ? styles.bottom : "",
@@ -317,6 +337,7 @@ export default function CellFactory<T extends Struct>(props: CellFactoryProps<T>
         name,
         editable,
         rendererRef,
+        readonly,
         value,
         format,
         rowIndex,
@@ -360,6 +381,9 @@ export default function CellFactory<T extends Struct>(props: CellFactoryProps<T>
                     )
                 }
             </div>
+            {contextMenuItems != null ? (
+                <ContextMenu commands={contextMenuItems} targetRef={ref} />
+            ) : ""}
         </div>
     )
 }

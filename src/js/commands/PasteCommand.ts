@@ -17,7 +17,7 @@ export default class PasteCommand<T extends Struct>
 {
     readonly icon: IconProp = "paste";
     readonly name: string = "Paste";
-    readonly shortCut: string = "⌘+v";
+    readonly accelerator: string = "⌘+v";
     readonly #previous: {id: string, clone: Record<T>}[];
     #items: ObservableList<T>;
 

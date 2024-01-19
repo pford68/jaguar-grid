@@ -18,12 +18,14 @@ export default function NumericRenderer(props: NumericProps): React.ReactElement
         rendererRef,
         className,
         validator,
+        readonly,
     } = props;
     const baseClassName = joinCss(styles.renderer, styles.numeric, className);
     const numericValue = value != null ? Number(value) : null;
     const formattedValue = precision != null ? numericValue?.toFixed?.(precision) : value;
     const nextProps = {
         name,
+        readonly,
         value: String(formattedValue),
         className: joinCss(baseClassName, styles.active),
     };
