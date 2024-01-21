@@ -166,7 +166,6 @@ export default function DataGrid(props: DataGridProps): ReactElement {
     );
 
 
-
     const visibleColumns = getVisibleColumns();
     const getMaxColumnWidth = useCallback(
         () => ((containerWidth ?? 0) / visibleColumns.length),
