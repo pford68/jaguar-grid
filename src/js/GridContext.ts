@@ -25,7 +25,6 @@ export type GridContextType = {
     redoStack?: CommandStack,
     gridRef?: RefObject<HTMLDivElement>,
     contextMenuItems?: Command<Struct>[],
-    outsideDragEnd?: RefObject<number | null>,
 }
 export const initialGridContext: GridContextType = {
     columns: [],
@@ -39,6 +38,5 @@ export const initialGridContext: GridContextType = {
     columnWidths: new Map(),
     columnSizing: "auto",
     alternateRows: false,
-    outsideDragEnd: undefined,
 }
 export const GridContext = createContext(initialGridContext);

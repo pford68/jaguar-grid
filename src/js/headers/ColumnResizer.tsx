@@ -27,16 +27,22 @@ export default function ColumnResizer(props: ColumnResizerProps): ReactElement {
     const edgeRef = useRef<HTMLDivElement>(null);
     const gridContext = useContext(GridContext);
     const gridEl = gridContext.gridRef?.current;
+    const outsideDragEnd = useRef<number | null>(null);
+
+    const onDragOutside = (e: DragEvent) => {
+        outsideDragEnd.current = e.clientX;
+    }
 
     const onDragStart = (e: ReactDragEvent): void => {
         e.dataTransfer.effectAllowed = "move";
         start.current = e.clientX;
+        document.body.addEventListener("dragover", onDragOutside);
         setActive(true);
     }
 
     const onDragEnd = (): void => {
+        document.body.removeEventListener("dragover", onDragOutside);
         // TODO: Maybe I should use outsideX all of the time, but I'm not sold yet.
-        const {outsideDragEnd} = gridContext;
         const endX = end.current >= 0 || outsideDragEnd?.current == null ? end.current : outsideDragEnd.current;
         /*
          Safari reports an incorrect clientX from onDragEnd.
