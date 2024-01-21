@@ -105,14 +105,11 @@ export default function TableColumn<T extends Struct>(props: TableColumnProps<T>
 
     const ref = useRef<HTMLDivElement>(null);
     const gridContext = useContext(GridContext);
-    const initialState: TableColumnState = {
-        pushed: sticky,
-    }
-    const [pin, setPin] = useState(initialState);
     const {
         gridDispatch,
         stickyHeaders,
         sortColumns,
+        pinned,
     } = gridContext;
     const focusModel = gridContext.focusModel?.current;
     const selectionModel = gridContext.selectionModel?.current;
@@ -141,6 +138,7 @@ export default function TableColumn<T extends Struct>(props: TableColumnProps<T>
     }
 
 
+    // ========================================== Effects
     useEffect(() => {
         mounted.current = true;
     }, [])
@@ -150,24 +148,32 @@ export default function TableColumn<T extends Struct>(props: TableColumnProps<T>
         const offset = findOffset();
         if (offset != null) {
             gridContext.offsets.set(name, offset);
-            console.log("table column: after setting offset", gridContext.columns.map(col => col.props.name))
-
         }
-    }, [gridContext.pinned]);
-
-
-    const updatePin = () => {
-        const pushed = !gridContext.pinned.has(name)
-        console.log("table column: before dispatch", name, pin)
-
-        const el = ref.current;
-        if (el != null && pushed) {
-            gridDispatch?.({type: "pin", payload: {name}});
-        } else if (el != null && !pushed) {
-            gridDispatch?.({type: "unpin", payload: {name}});
+        const width = gridContext.columnWidths.get(name);
+        if (ref.current != null) {
+            if (width != null) ref.current.style.width = `${width}px`;
         }
-    }; // Must watch all of these.  Offsets was required for column 0 to pin at
-        // the correct position when other columns were pinned first.
+    }, [
+        gridContext.pinned,
+        gridContext.sortColumns,
+        gridContext.sortDirection,
+        gridContext.columnWidths.values(),
+    ]);
+
+
+    // =========================================== Event handlers
+    const updatePin = useCallback(
+        () => {
+            const pushed = !pinned.has(name)
+            const el = ref.current;
+            if (el != null && pushed) {
+                gridDispatch?.({type: "pin", payload: {name}});
+            } else if (el != null && !pushed) {
+                gridDispatch?.({type: "unpin", payload: {name}});
+            }
+        },
+        [pinned, gridDispatch, ref.current],
+    );
 
 
     const onSortClicked = () => {
@@ -207,8 +213,7 @@ export default function TableColumn<T extends Struct>(props: TableColumnProps<T>
         [focusModel, selectionModel],
     );
 
-    console.log("table column: before render", gridContext.columns.map(col => col.props.name), name, pin)
-
+    // ===================================== Rendering
     return  (
         <div
             ref={ref}
@@ -234,8 +239,8 @@ export default function TableColumn<T extends Struct>(props: TableColumnProps<T>
                 {sortable ? <SortButton active={active} sortDirection={sortDirection} /> : ""}
             </div>
             <Pin
-                active={gridContext.pinned.has(name)}
-                updater={() => updatePin()}
+                active={pinned.has(name)}
+                onClick={() => updatePin()}
             />
             {resizable ? (
                 <ColumnResizer

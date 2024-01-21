@@ -94,7 +94,6 @@ export type GridState = {
     undoStack: CommandStack,
     redoStack: CommandStack,
     pinned: Set<string>,
-    offsets: Map<string, number>,
     lastUpdated: number,
     fitContainer: boolean,
 };
@@ -185,7 +184,6 @@ export default function DataGrid(props: DataGridProps): ReactElement {
         undoStack: new CommandStack(),
         redoStack: new CommandStack(),
         pinned: new Set<string>(),
-        offsets: new Map(),
         lastUpdated: new Date().getTime(),
         fitContainer: false,
     }
@@ -252,7 +250,6 @@ export default function DataGrid(props: DataGridProps): ReactElement {
         return pinned.has(aName) && !pinned.has(bName) ? -1 :
             (!pinned.has(aName) && pinned.has(bName) ? 1 : 0);
     });
-    console.log("datagrid: after sort", visibleColumns.map(col => col.props.name))
 
     const columnWidths = useRef(new Map(visibleColumns.map(col => [col.props.name, col.props.width])))
     const finalColumnSizing = columnSizing && !state.fitContainer ? columnSizing : "equal";
@@ -270,6 +267,7 @@ export default function DataGrid(props: DataGridProps): ReactElement {
             items: data,
             columns: visibleColumns,
             columnWidths: columnWidths.current,
+            offsets: new Map(),
             selectionModel,
             focusModel,
             stickyHeaders,
@@ -377,20 +375,18 @@ function reducer(state: GridState, action: GridAction): GridState {
         case "pin": {
             const {payload} = action;
             if (payload != null) {
-                const {pinned, offsets} = state;
+                const {pinned} = state;
                 pinned.add(payload.name);
-                //offsets.set(payload.name, Number(payload.value));
-                return {...state, pinned: new Set(pinned)/*, offsets*/};
+                return {...state, pinned: new Set(pinned)};
             }
             return state;
         }
         case "unpin": {
             const {payload} = action;
             if (payload != null) {
-                const {pinned, offsets} = state;
+                const {pinned} = state;
                 pinned.delete(payload.name);
-                offsets.delete(payload.name);
-                return {...state, pinned: new Set(pinned), offsets};
+                return {...state, pinned: new Set(pinned)};
             }
             return state;
         }

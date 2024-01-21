@@ -6,11 +6,11 @@ import {Consumer} from "../../types/types";
 
 type PinProps = {
     active: boolean,
-    updater: Consumer<MouseEvent>,
+    onClick: Consumer<MouseEvent>,
 }
 
 export default function Pin(props: PinProps): ReactElement {
-    const {active, updater} = props;
+    const {active, onClick} = props;
 
     return (
         <FontAwesomeIcon
@@ -20,7 +20,7 @@ export default function Pin(props: PinProps): ReactElement {
                 styles.pin,
                 active ? styles.active : ""
             )}
-            onClick={updater}
+            onClick={onClick}
         />
     );
 }
