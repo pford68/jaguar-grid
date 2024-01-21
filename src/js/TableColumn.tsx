@@ -1,5 +1,12 @@
-import React, {ReactElement, useContext, useEffect, useRef, useState, DragEvent, useCallback} from "react";
-import {BiFunction, Command, Struct} from "../types/types";
+import React, {
+    ReactElement,
+    useContext,
+    useEffect,
+    useRef,
+    DragEvent,
+    useCallback,
+} from "react";
+import {BiFunction, Struct} from "../types/types";
 import styles from "./DataGrid.css";
 import {GridContext} from "./GridContext";
 import {DataTypes} from "../types/types";
@@ -9,7 +16,7 @@ import {MIN_COLUMN_WIDTH, SORT_DIRECTION_ASC, SORT_DIRECTION_DESC} from "./const
 import ColumnResizer from "./headers/ColumnResizer";
 import {joinCss} from "./util/utils";
 import Pin from "./headers/Pin";
-import usePushPin from "./headers/usePushPin";
+
 
 type TableColumnState = {
     pushed: boolean,
@@ -97,45 +104,78 @@ export default function TableColumn<T extends Struct>(props: TableColumnProps<T>
 
     const ref = useRef<HTMLDivElement>(null);
     const gridContext = useContext(GridContext);
-    const initialState: TableColumnState = {
-        pushed: sticky,
-    }
-    const [pin, setPin] = useState(initialState);
     const {
         gridDispatch,
         stickyHeaders,
         sortColumns,
+        pinned,
     } = gridContext;
     const focusModel = gridContext.focusModel?.current;
     const selectionModel = gridContext.selectionModel?.current;
     const active = sortColumns?.[0] === name;
     let sortDirection = gridContext.sortDirection;
+    const mounted = useRef(false);
 
+    if (sticky && !mounted.current) {
+        gridContext.pinned.add(name);
+    }
 
-    useEffect(() => {
-        if (pin.pushed) {
-            usePushPin({
-                el: ref.current,
-                pushed: !pin.pushed,
-                updater: setPin,
-            });
-        }
-    }, [ref.current, gridContext.pinned]);
-
-
-    useEffect(() => {
+    const findOffset = () => {
         const el = ref.current;
-        if (el != null && pin.pushed) {
-            gridDispatch?.({type: "pin", payload: {name, value: pin.offset}});
-        } else if (el != null && !pin.pushed) {
-            gridDispatch?.({type: "unpin", payload: {name}});
+        if (el == null) return;
+
+        let offset = 0;
+        const prev = el.previousElementSibling;
+        if (prev instanceof HTMLElement) {
+            offset += Number(prev.getAttribute("data-offset"));
+            offset += prev.offsetWidth;
+        }
+
+        el.style.left = `${offset}px`;
+        el.setAttribute("data-offset", String(offset));
+        return offset;
+    }
+
+
+    // ========================================== Effects
+    useEffect(() => {
+        mounted.current = true;
+    }, [])
+
+
+    /*
+    Resets column widths and offsets in response changes that cause re-renders.
+     */
+    useEffect(() => {
+        const offset = findOffset();
+        if (offset != null) {
+            gridContext.offsets.set(name, offset);
+        }
+        const width = gridContext.columnWidths.get(name);
+        if (ref.current != null) {
+            if (width != null) ref.current.style.width = `${width}px`;
         }
     }, [
-        pin.pushed,
-        pin.offset,
-        ref.current
-    ]); // Must watch all of these.  Offsets was required for column 0 to pin at
-        // the correct position when other columns were pinned first.
+        gridContext.pinned,
+        gridContext.sortColumns,
+        gridContext.sortDirection,
+        gridContext.columnWidths.values(),
+    ]);
+
+
+    // =========================================== Event handlers
+    const updatePin = useCallback(
+        () => {
+            const pushed = !pinned.has(name)
+            const el = ref.current;
+            if (el != null && pushed) {
+                gridDispatch?.({type: "pin", payload: {name}});
+            } else if (el != null && !pushed) {
+                gridDispatch?.({type: "unpin", payload: {name}});
+            }
+        },
+        [pinned, gridDispatch, ref.current],
+    );
 
 
     const onSortClicked = () => {
@@ -153,8 +193,8 @@ export default function TableColumn<T extends Struct>(props: TableColumnProps<T>
         });
     }
 
-    const colIndex = gridContext.columnNames
-        .findIndex(col => col === name);
+    const colIndex = gridContext.columns
+        .findIndex(col => col.props.name === name);
 
     const handleResize = (delta: number) => {
         if (ref.current != null) {
@@ -175,7 +215,7 @@ export default function TableColumn<T extends Struct>(props: TableColumnProps<T>
         [focusModel, selectionModel],
     );
 
-
+    // ===================================== Rendering
     return  (
         <div
             ref={ref}
@@ -187,7 +227,7 @@ export default function TableColumn<T extends Struct>(props: TableColumnProps<T>
                 !wrap ? styles.nowrap : "",
                 resizable ? styles.resizable : "",
                 stickyHeaders ? styles.stickyHeaders : "",
-                pin.pushed ? styles.stickyColumn : "",
+                gridContext.pinned.has(name) ? styles.stickyColumn : "",
                 gridContext.pinned.size - 1 === colIndex ? styles.divider : "",
                 type != null && styles[type] ? styles[type] : "",
             )}
@@ -201,10 +241,8 @@ export default function TableColumn<T extends Struct>(props: TableColumnProps<T>
                 {sortable ? <SortButton active={active} sortDirection={sortDirection} /> : ""}
             </div>
             <Pin
-                parentRef={ref}
-                name={name}
-                active={pin.pushed}
-                updater={setPin}
+                active={pinned.has(name)}
+                onClick={() => updatePin()}
             />
             {resizable ? (
                 <ColumnResizer
