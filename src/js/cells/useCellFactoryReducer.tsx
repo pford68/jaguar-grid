@@ -21,7 +21,6 @@ export default function useCellFactoryReducer(props: useReducerProps): [CellFact
         items,
         undoStack,
         redoStack,
-        nullable,
     } = gridContext;
     const getParserByType = useParserRegistry();
 

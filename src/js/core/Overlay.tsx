@@ -31,7 +31,6 @@ export default function Overlay(props: OverlayProps): ReactNode | ReactNode[] {
         top,
         left,
         className,
-        onClickOutside,
         offsetTop,
         offsetLeft,
         noContextMenu,

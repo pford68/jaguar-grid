@@ -18,10 +18,6 @@ import {joinCss} from "./util/utils";
 import Pin from "./headers/Pin";
 
 
-type TableColumnState = {
-    pushed: boolean,
-    offset?: number,
-}
 
 /**
  * Extends ColumnConfigurableProps so that the CellFactory can be configured from the TableColumn.
