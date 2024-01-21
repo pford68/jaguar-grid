@@ -1,3 +1,25 @@
-.hot {
-    color: red;
+html {
+    font-family: 'Nunito Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+.main {
+    margin-left: 50px;
+}
+
+.header {
+  margin: 20px 0;
+}
+.header select {
+    margin-left: 10px;
+    min-width: 150px;
+}
+
+.footer {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    row-gap: 5px;
+}
+.footer cite span {
+    margin-right: 5px;
 }

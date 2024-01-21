@@ -63,7 +63,7 @@ In some browsers, IntersectionObserver doesn't play nice with `<tbody>` elements
 
 #### Further Drawbacks
 A similar approach is discussed [here](https://gusruss89.medium.com/super-simple-list-virtualization-in-react-with-intersectionobserver-ca340fe98a34).
-This approach creates a lot of extra elements, but this approach has been used in production with no known performance issues.
+This approach creates a lot of extra elements, but it has been used in production with no known performance issues.
 
 
 

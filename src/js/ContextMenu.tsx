@@ -80,7 +80,7 @@ export default function ContextMenu(props: ContextMenuProps): ReactElement {
                 top={state.top}
                 left={state.left}
                 className={joinCss(styles.contextmenu, className)}
-                onClick={e => setState({...state, visible: false})}
+                onClick={() => setState({...state, visible: false})}
             />
         );
     }

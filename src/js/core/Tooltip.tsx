@@ -19,7 +19,7 @@ export default function Tooltip(props: TooltipProps): ReactElement {
 
     const onMouseover = useCallback(
         (e: MouseEvent) => {
-            setState((prev) => {
+            setState(() => {
                 return {
                     visible: true,
                     top: e.clientY,

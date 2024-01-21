@@ -1,4 +1,4 @@
-import React, {ReactElement, RefObject, MouseEvent} from "react";
+import React, {ReactElement, MouseEvent} from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import styles from "./Pin.css";
 import {joinCss} from "../util/utils";

@@ -122,7 +122,6 @@ export default function CellFactory<T extends Struct>(props: CellFactoryProps<T>
     } = props;
     const gridContext = useContext(GridContext);
     const {
-        nullable,
         columnWidths,
         columnSizing,
         pinned,
