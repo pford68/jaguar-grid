@@ -166,7 +166,6 @@ export default function DataGrid(props: DataGridProps): ReactElement {
     );
 
 
-
     const visibleColumns = getVisibleColumns();
     const getMaxColumnWidth = useCallback(
         () => ((containerWidth ?? 0) / visibleColumns.length),
@@ -177,6 +176,7 @@ export default function DataGrid(props: DataGridProps): ReactElement {
     const rowCount = data.length;
     const selectionModel = useRef(new SelectionModel(data));
     const focusModel = useRef(new FocusModel(rowCount, visibleColumns.length));
+    const outsideDragEnd = useRef<number | null>(null);
     const initSortColumn = props.sortColumn ?? visibleColumns[0].props.name;
     const initialGridState: GridState = {
         sortColumns: [initSortColumn],
@@ -192,6 +192,18 @@ export default function DataGrid(props: DataGridProps): ReactElement {
 
     //====================================== Effects
     useStorageClipboard();
+
+    // JAG-56:  For DragEvents that extend outside the scrollable container.
+    useEffect(() => {
+        const onDragOutside = (e: DragEvent) => {
+            outsideDragEnd.current = e.clientX;
+        }
+        document.body.addEventListener("dragover", onDragOutside);
+        return () => {
+            document.body.removeEventListener("dragover", onDragOutside);
+        }
+    }, []);
+
 
     useEffect(() => {
         if (rowCount != focusModel.current.rowCount) {
@@ -275,6 +287,7 @@ export default function DataGrid(props: DataGridProps): ReactElement {
             columnSizing,
             alternateRows,
             contextMenuItems,
+            outsideDragEnd,
         }}>
             <ColumnStyle
                 type={finalColumnSizing == "auto" || finalColumnSizing == "equal" ? finalColumnSizing : "auto"}

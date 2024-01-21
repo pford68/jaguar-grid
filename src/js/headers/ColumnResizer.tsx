@@ -1,6 +1,6 @@
 import React, {
     ReactElement,
-    DragEvent,
+    DragEvent as ReactDragEvent,
     useRef,
     useContext,
     ReactNode,
@@ -28,23 +28,26 @@ export default function ColumnResizer(props: ColumnResizerProps): ReactElement {
     const gridContext = useContext(GridContext);
     const gridEl = gridContext.gridRef?.current;
 
-    const onDragStart = (e: DragEvent): void => {
+    const onDragStart = (e: ReactDragEvent): void => {
         e.dataTransfer.effectAllowed = "move";
         start.current = e.clientX;
         setActive(true);
     }
 
     const onDragEnd = (): void => {
+        // TODO: Maybe I should use outsideX all of the time, but I'm not sold yet.
+        const {outsideDragEnd} = gridContext;
+        const endX = end.current >= 0 || outsideDragEnd?.current == null ? end.current : outsideDragEnd.current;
         /*
          Safari reports an incorrect clientX from onDragEnd.
-         Using the clientX captured in onDrag
+         Using the clientX captured in onDrag instead.
          */
-        const delta = end.current - start.current; // Safari reports an incorrect clientX from onDragEnd.
+        const delta = endX - start.current; // Safari reports an incorrect clientX from onDragEnd.
         setActive(false);
         onResize(delta);
     }
 
-    const onDrag = (e: DragEvent): void => {
+    const onDrag = (e: ReactDragEvent): void => {
         /*
            Safari reports an incorrect clientX from onDragEnd.
            Using the clientX captured in onDrag
@@ -52,8 +55,6 @@ export default function ColumnResizer(props: ColumnResizerProps): ReactElement {
         end.current = e.clientX;
         if (edgeRef.current instanceof HTMLElement) {
             const offsetLeft = gridEl?.offsetParent != document.body ? gridEl?.parentElement?.offsetLeft ?? gridEl?.offsetLeft ?? 0 : 0;
-            //console.log({scrollLeft: gridEl?.parentElement?.scrollLeft, offsetLeft, pageX: e.pageX, clientX: e.clientX})
-            //const pageOffset = e.pageX - e.clientX;
             const notScrolled =  (gridEl?.offsetWidth ?? 0) < (gridEl?.parentElement?.offsetWidth ?? 0);
             edgeRef.current.style.left = notScrolled ? `${e.pageX - offsetLeft}px` :`${e.clientX + (gridEl?.parentElement?.scrollLeft ?? 0) - offsetLeft}px`;
         }
