@@ -3,7 +3,6 @@ import React, {
     useContext,
     useEffect,
     useRef,
-    useState,
     DragEvent,
     useCallback,
 } from "react";
@@ -144,6 +143,9 @@ export default function TableColumn<T extends Struct>(props: TableColumnProps<T>
     }, [])
 
 
+    /*
+    Resets column widths and offsets in response changes that cause re-renders.
+     */
     useEffect(() => {
         const offset = findOffset();
         if (offset != null) {
