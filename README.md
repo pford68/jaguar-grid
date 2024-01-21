@@ -6,24 +6,30 @@ Off ond on, I have spent much of the last 2 years working on datagrids. Now, I w
 Those familiar with JavaFX will see a lot of similarity in the interfaces.  I drew some inspiration from TableView at times.
 
 ## Features
-The following features will be supported:
+The following features are currently supported:
 
 * Editable cells
 * Keyboard cell navigation
 * Sticky headers and sticky columns
 * Resizable columns
 * Auto-sizing columns to fit the content (with caveats), when no initial width is specified
-* Showing/hiding columns
-* Sortable columns and support for secondary sort
+* Sortable columns
 * Virtualized rows to handle large datasets
 * Support for copying/cutting and pasting cell values
     * Either copying the value from the model, as opposed to the displayed text
     * Or copying the displayed text if the text is selected:  either by double-/triple-clicked or by drag-selecting.
     * The paste operation should update the model for the update the updated cells.
-* Support for batch-selecting a group of cells and copying and pasting
+* Support for batch-copying and pasting
     * The ability to select entire rows/columns
 * Support for undoing and redoing operations like cut and paste.
 * Support for context menus
+
+
+### TODOs
+* Showing/hiding columns
+* Support for secondary sort
+* Dragging columns
+
 
 
 ## Lessons Learned
@@ -53,6 +59,11 @@ In theory, using IntersectionObserver makes virtualization simple:
 In some browsers, IntersectionObserver doesn't play nice with `<tbody>` elements. The approach above works great in Chrome, but not in Firefox or Safari. In those browsers, all buckets fill immediately. Thus, a dataset of 3000 rows and 30 columns would crash the browser.
 * The problem is that, even if the CSS height property of the empty `<tbody>` elements is set, the IntersectionObserver regards those elements as having 0 height; thus, it determines that all of the `<tobdy>` elements are intersecting. :\
 * This problem can be solved (sub-optimally) by adding an empty `<tr>` element, with the correct height, to the each empty `<tbody>`.  Thanks, Safari and Firefox. :\
+
+
+#### Further Drawbacks
+A similar approach is discussed [here](https://gusruss89.medium.com/super-simple-list-virtualization-in-react-with-intersectionobserver-ca340fe98a34).
+This approach creates a lot of extra elements, but this approach has been used in production with no known performance issues.
 
 
 
