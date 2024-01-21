@@ -94,8 +94,6 @@ export type GridState = {
     undoStack: CommandStack,
     redoStack: CommandStack,
     pinned: Set<string>,
-    unpinned: Set<string>,
-    offsets: Map<string, number>,
     lastUpdated: number,
     fitContainer: boolean,
 };
@@ -176,10 +174,9 @@ export default function DataGrid(props: DataGridProps): ReactElement {
     );
 
     //=================================== State
-    const colNames = visibleColumns.map(col => col.props.name);
     const rowCount = data.length;
     const selectionModel = useRef(new SelectionModel(data));
-    const focusModel = useRef(new FocusModel(rowCount, colNames.length));
+    const focusModel = useRef(new FocusModel(rowCount, visibleColumns.length));
     const initSortColumn = props.sortColumn ?? visibleColumns[0].props.name;
     const initialGridState: GridState = {
         sortColumns: [initSortColumn],
@@ -187,8 +184,6 @@ export default function DataGrid(props: DataGridProps): ReactElement {
         undoStack: new CommandStack(),
         redoStack: new CommandStack(),
         pinned: new Set<string>(),
-        unpinned: new Set<string>([...colNames]),
-        offsets: new Map(),
         lastUpdated: new Date().getTime(),
         fitContainer: false,
     }
@@ -202,12 +197,12 @@ export default function DataGrid(props: DataGridProps): ReactElement {
         if (rowCount != focusModel.current.rowCount) {
             focusModel.current.rowCount = data.length;
         }
-        if (colNames.length != focusModel.current.columnCount) {
-            focusModel.current.columnCount = colNames.length;
+        if (visibleColumns.length != focusModel.current.columnCount) {
+            focusModel.current.columnCount = visibleColumns.length;
         }
     }, [
         data.length,
-        colNames
+        visibleColumns
     ]);
 
 
@@ -271,8 +266,8 @@ export default function DataGrid(props: DataGridProps): ReactElement {
             gridDispatch,
             items: data,
             columns: visibleColumns,
-            columnNames: colNames,
             columnWidths: columnWidths.current,
+            offsets: new Map(),
             selectionModel,
             focusModel,
             stickyHeaders,
@@ -380,22 +375,18 @@ function reducer(state: GridState, action: GridAction): GridState {
         case "pin": {
             const {payload} = action;
             if (payload != null) {
-                const {pinned, unpinned, offsets} = state;
-                unpinned.delete(payload.name);
+                const {pinned} = state;
                 pinned.add(payload.name);
-                offsets.set(payload.name, Number(payload.value));
-                return {...state, pinned: new Set(pinned), unpinned: new Set(unpinned), offsets};
+                return {...state, pinned: new Set(pinned)};
             }
             return state;
         }
         case "unpin": {
             const {payload} = action;
             if (payload != null) {
-                const {pinned, unpinned, offsets} = state;
+                const {pinned} = state;
                 pinned.delete(payload.name);
-                unpinned.add(payload.name);
-                offsets.delete(payload.name);
-                return {...state, pinned: new Set(pinned), unpinned: new Set(unpinned), offsets};
+                return {...state, pinned: new Set(pinned)};
             }
             return state;
         }

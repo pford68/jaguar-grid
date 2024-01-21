@@ -27,7 +27,7 @@ export class FocusMode implements CellState {
         const ctrlKey = e.ctrlKey || e.metaKey;
         const {
             items,
-            columnNames,
+            columns,
             gridDispatch,
             undoStack,
         } = this.#context;
@@ -37,6 +37,7 @@ export class FocusMode implements CellState {
         if (focusedCell == null || focusModel ==  null || selectionModel == null || items == null) return;
 
         const rowCount = items?.length;
+        const columnNames = columns.map(col => col.props.name);
 
         switch (key) {
             case "ArrowLeft": {
@@ -114,7 +115,6 @@ export class FocusMode implements CellState {
                 if (e.ctrlKey || e.metaKey) {
                     e.preventDefault();
                     const doCut = e.key === "x" || e.key ===" Cut";
-                    const {columnNames} = this.#context;
                     const selectedItems = selectionModel?.getSelectedItems();
                     if (selectedItems != null && selectionModel?.edges != null) {
                         const cmd = doCut
