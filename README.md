@@ -3,7 +3,7 @@ Just Another (Data)Grid Useful for Applications with React
 
 Off ond on, I have spent much of the last 2 years working on datagrids. Now, I want to design one of my own, applying lessons learned from previous projects.
 
-Those familiar with JavaFX will see a lot of similarity in the interfaces.  I drew some inspiration from TableView at times.
+Those familiar with JavaFX will see a lot of similarity in the interfaces.  I drew some inspiration from TableView.
 
 ## Features
 The following features are currently supported:
@@ -43,7 +43,7 @@ This is a solvable problem.  In short, set **min-widths** on columns, instead of
 
 ##### The problem with this approach
 * What if I want to use a fixed table layout?  Avoiding setting a table width precludes that.
-* Also I think it is unexpected, and maybe fragile, that you have to avoid setting the width property.
+* I also think it is unexpected, and maybe fragile, that you have to avoid setting the width property.
 
 
 #### Virtualization
@@ -61,13 +61,18 @@ In some browsers, IntersectionObserver doesn't play nice with `<tbody>` elements
 * This problem can be solved (sub-optimally) by adding an empty `<tr>` element, with the correct height, to the each empty `<tbody>`.  Thanks, Safari and Firefox. :\
 
 
-#### Further Drawbacks
+#### Further issues
 A similar approach is discussed [here](https://gusruss89.medium.com/super-simple-list-virtualization-in-react-with-intersectionobserver-ca340fe98a34).
 This approach creates a lot of extra elements, but it has been used in production with no known performance issues.
 
 
 
 ## Usage
+In short:
+1. Take an array of objects, perhaps returned from an API, convert it to an array of Records,
+2. Pass that array to an ObservableList. That list notified listeners when changes are made to the list.
+3. Pass that ObservableList to the DataGrid component's `data` prop.
+4. Added a `<TableColumn>` component for each column that you want to display.
 
 ```tsx
 function MyGreatPage(props) {
@@ -111,3 +116,7 @@ function MyGreatPage(props) {
   )
 }
 ```
+
+## Documentation
+For more information about editing, moving in/out of edit mode, and available key commands, see the Wiki.
+TBD.
