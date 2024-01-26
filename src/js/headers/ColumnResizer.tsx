@@ -42,7 +42,7 @@ export default function ColumnResizer(props: ColumnResizerProps): ReactElement {
 
     const onDragEnd = (): void => {
         document.body.removeEventListener("dragover", onDragOutside);
-        // TODO: Maybe I should use outsideX all of the time, but I'm not sold yet.
+        // TODO: Maybe I should use outsideDragEnd all of the time, but I'm not sold yet.
         const endX = end.current > 0 || outsideDragEnd?.current == null ? end.current : outsideDragEnd.current;
         /*
          Safari reports an incorrect clientX from onDragEnd.
