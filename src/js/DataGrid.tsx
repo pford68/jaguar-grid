@@ -10,7 +10,7 @@ import React, {
 } from "react";
 import PageFactory from "./PageFactory";
 import ObservableList, {Record} from "./ObservableList";
-import type {Command, Struct} from "../types/types";
+import type {Command, Consumer, Struct} from "../types/types";
 import styles from "./DataGrid.css";
 import {joinCss} from "./util/utils";
 import {GridContext} from "./GridContext";
@@ -84,9 +84,14 @@ export type DataGridProps = {
      * @todo
      */
     secondarySort?: boolean,
+    /**
+     * A list of Commands that will be used to crete a contextmenu.
+     * This is both necessary and sufficient
+     */
     contextMenuItems?: Command<Struct>[],
     containerRef?: RefObject<HTMLElement>,
-}
+};
+
 
 export type GridState = {
     sortColumns: string[],
@@ -154,13 +159,6 @@ export default function DataGrid(props: DataGridProps): ReactElement {
         () => {
             return getChildArray()
                 .filter(child => child.type === TableColumn);
-        },
-        [children],
-    );
-
-    const getFooter = useCallback(
-        () => {
-                return getChildArray().find(child => child.type === TableFooter);
         },
         [children],
     );
@@ -309,7 +307,6 @@ export default function DataGrid(props: DataGridProps): ReactElement {
                     rowHeight={rowHeight}
                 />
             </div>
-            {getFooter() ?? ""}
             {
                 contextMenuItems
                     ? (
