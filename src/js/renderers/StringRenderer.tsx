@@ -7,7 +7,7 @@ import {joinCss} from "../util/utils";
 import styles from "./Renderers.css";
 
 
-export type StringProps = BaseRendererProps<number> & {
+export type StringProps = BaseRendererProps<string> & {
     autocomplete?: boolean,
 };
 

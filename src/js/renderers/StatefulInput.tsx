@@ -30,6 +30,8 @@ type StatefulInputProps = {
     placeholder?: string,
     disabled?: boolean,
     checked?: boolean,
+    autoComplete?: boolean,
+    list?: string,
 }
 
 /**
@@ -58,6 +60,8 @@ export default function StatefulInput(props: StatefulInputProps, ref?: Ref<HTMLI
         readonly,
         disabled,
         checked,
+        autoComplete,
+        list,
     } = props;
     const [value, setValue] = useState(initValue);
     const [valid, setValid] = useState(true);
@@ -75,6 +79,7 @@ export default function StatefulInput(props: StatefulInputProps, ref?: Ref<HTMLI
         readOnly: readonly,
         disabled,
         checked,
+        list,
     }
 
     useEffect(() => {
@@ -103,6 +108,7 @@ export default function StatefulInput(props: StatefulInputProps, ref?: Ref<HTMLI
                 }
             }}
             className={joinCss(styles.input, !valid ? styles.invalid : "", className)}
+            autoComplete={autoComplete === true ? "on" : "off"}
         />
     );
 }

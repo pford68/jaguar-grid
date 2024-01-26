@@ -45,6 +45,29 @@ export type ContextMenuParameter = {
     items: ObservableList<Struct>,
 }
 
+export type Role = "scrollbar"
+    | "searchbox"
+    | "separator"
+    | "slider"
+    | "switch"
+    | "tab"
+    | "tabpanel"
+    | "treeitem"
+    | "combobox"
+    | "menu"
+    | "menubar"
+    | "tablist"
+    | "tree"
+    | "treegrid"
+    | "dialog"
+    | "main"
+    | "region"
+    | "navigation"
+    | "search"
+    | "form"
+    | "toolbar"
+    | "tooltip"
+;
 
 
 
