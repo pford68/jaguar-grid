@@ -71,17 +71,17 @@ This approach creates a lot of extra elements, but it has been used in productio
 
 ```tsx
 function MyGreatPage(props) {
-  const data = new ObservableList(serverData);
+  const data = new ObservableList(serverData.map(item => new Record(item)));
 
   return (
           <>
             ...
             <DataGrid
-                    data={data}
-                    editable
-                    alternateRows
-                    stickyHeaders
-                    secondarySort
+              data={data}
+              editable
+              alternateRows
+              stickyHeaders
+              secondarySort
             >
                 <TableColumn name="firstName" text="First Name" validator={v => v != "Bob"} />
                 <TableColumn name="lastName" text="Last Name" required />
