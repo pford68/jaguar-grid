@@ -3,17 +3,16 @@ import {Meta, StoryObj} from "@storybook/react";
 import DataGrid from "../src/js/DataGrid";
 import TableColumn from "../src/js/TableColumn";
 import ObservableList, {Record} from "../src/js/ObservableList";
-import {RefObject, useRef} from "react";
-import TableFooter from "../src/js/TableFooter";
+import {useRef} from "react";
 import Person, {Measurements} from "../tests/models/Person";
 import NumericRenderer from "../src/js/renderers/NumericRenderer";
 import people from "../tests/fixtures/people.json";
 import airlineSafety from "../tests/fixtures/airline_safety.json";
 import Container from "../src/js/layout/Container";
 import BaseCommand from "../src/js/commands/BaseCommand";
-import {Struct} from "../src/types/types";
+import {ContextMenuParameter, Struct} from "../src/types/types";
 import {IconProp} from "@fortawesome/fontawesome-svg-core";
-import SelectionModel from "../src/js/SelectionModel";
+import styles from "../src/js/DataGrid.css";
 
 
 type PropsAndArgs = React.ComponentProps<typeof DataGrid> & {
@@ -38,13 +37,8 @@ export default meta;
 
 type Story = StoryObj<PropsAndArgs>;
 
-type GridContextMenuParams = {
-    targetRef: RefObject<HTMLElement>,
-    selectionModel: SelectionModel,
-    items: ObservableList<Struct>,
-}
 
-class LogCommand extends BaseCommand<GridContextMenuParams>{
+class LogCommand extends BaseCommand<ContextMenuParameter>{
     get icon():IconProp { return "pencil"}
     get name() { return "Log"}
     get accelerator() { return "⌘+l"}
@@ -133,13 +127,14 @@ const airlineSafetyRenderer = (args: PropsAndArgs) => {
                     <TableColumn type="number" name="incidents_00_14" text="Incidents 2014" />
                     <TableColumn type="number" name="fatal_accidents_00_14" text="Fatal Accidents 2014" />
                     <TableColumn type="number" name="fatalities_00_14" text="Fatalities 2014"/>
-                    <TableFooter
-                        showRowCount={args.showRowCount}
-                        attachTo={containerRef}
-                        citation={<a href="https://github.com/fivethirtyeight/data/tree/master/airline-safety">538</a>}
-                    />
                 </DataGrid>
             </Container>
+            <div className={styles.footer}>
+                <div>Row count: {args.data.length}</div>
+                <cite>
+                    Source: <a href="https://github.com/fivethirtyeight/data/tree/master/airline-safety">538</a>
+                </cite>
+            </div>
         </section>
     );
 };

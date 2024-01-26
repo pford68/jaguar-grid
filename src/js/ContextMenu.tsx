@@ -1,12 +1,12 @@
 import React, {ReactElement, RefObject, useContext, useEffect, useRef, useState} from "react";
-import {Command} from "../types/types";
+import {Command, Struct} from "../types/types";
 import {joinCss} from "./util/utils";
 import styles from "./core/menus.css";
 import Menu from "./core/Menu";
 import {GridContext} from "./GridContext";
 
 type ContextMenuProps = {
-    commands: Command<unknown>[],
+    commands: Command<Struct>[],
     targetRef: RefObject<HTMLElement>,
     className?: string,
 }
@@ -72,7 +72,8 @@ export default function ContextMenu(props: ContextMenuProps): ReactElement {
                 selectionModel: gridContext.selectionModel?.current,
                 items: gridContext.items,
             })
-        }))
+        }));
+
         return (
             <Menu
                 commands={commands}
@@ -84,5 +85,6 @@ export default function ContextMenu(props: ContextMenuProps): ReactElement {
             />
         );
     }
+
     return <></>;
 }
