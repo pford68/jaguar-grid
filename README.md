@@ -57,8 +57,8 @@ In theory, using IntersectionObserver makes virtualization simple:
 
 ##### The problem with this approach
 In some browsers, IntersectionObserver doesn't play nice with `<tbody>` elements. The approach above works great in Chrome, but not in Firefox or Safari. In those browsers, all buckets fill immediately. Thus, a dataset of 3000 rows and 30 columns would crash the browser.
-* The problem is that, even if the CSS height property of the empty `<tbody>` elements is set, the IntersectionObserver regards those elements as having 0 height; thus, it determines that all of the `<tobdy>` elements are intersecting. :\
-* This problem can be solved (sub-optimally) by adding an empty `<tr>` element, with the correct height, to the each empty `<tbody>`.  Thanks, Safari and Firefox. :\
+* The problem is that, even if the CSS height property of the empty `<tbody>` elements is set, the IntersectionObserver regards those elements as having 0 height; thus, it determines that all of the `<tobdy>` elements are intersecting.
+* This problem can be solved (sub-optimally) by adding an empty `<tr>` element, with the correct height, to the each empty `<tbody>`. 
 
 
 #### Further issues
