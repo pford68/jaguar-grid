@@ -9,7 +9,7 @@ import React, {
     useState,
     useCallback,
 } from "react";
-import {Command, Consumer, Coordinates, Predicate, Struct} from "../../types/types";
+import {Command, Consumer, Coordinates, Predicate, Role, Struct} from "../../types/types";
 import {GridContext} from "../GridContext";
 import {joinCss} from "../util/utils";
 import styles from "../DataGrid.css";
@@ -69,7 +69,14 @@ export type ColumnConfigurableProps<T extends Struct> = {
     precision?: number,
     /** Whether text should wrap. */
     wrap?: boolean,
+    /** Commands for the column's context menu. */
     contextMenuItems?: Command<Struct>[],
+    /**
+     * Items for the column's DataLists.
+     * Turns the cells in the column into autocomplete fields.
+     */
+    listItems?: string[],
+    role?: Role,
 }
 
 /**
